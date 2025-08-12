@@ -99,13 +99,12 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
     return (
       <div className=" text-main p-4 flex items-center justify-between ">
         <div className="font-semibold text-2xl">{"Welcome, Admin"}</div>
-      
       </div>
     );
   };
 
   return (
-    <div className="flex  min-h-screen">
+    <div className="flex  min-h-screen bg-[#0D121E] text-white">
       {sidebarOpen && (
         <div
           className="fixed inset-0 z-20 bg-black/20 lg:hidden"
@@ -115,7 +114,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
 
       {/* Sidebar */}
       <div
-        className={`fixed z-30 h-screen w-64 transform bg-[#131824]  transition-transform duration-300 ease-in-out ${
+        className={`fixed z-30 h-screen w-64 transform bg-[#131824]  transition-transform duration-300 ease-in-out text-white ${
           sidebarOpen ? "translate-x-0" : "-translate-x-full"
         } lg:translate-x-0`}
       >
