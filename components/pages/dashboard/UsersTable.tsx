@@ -2,56 +2,62 @@ import { DataTable } from "@/components/reusable/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import React, { useState } from "react";
 
-interface LocationItem {
+interface UserDetail {
   id: number;
-  state: string;
-  city: string;
-  country: string;
+  name: string;
+  email: string;
+  subscription: string;
+  transactionId: string;
+  joinDate: string;
+  status: string;
+  lastActivity: string;
+  action: string;
 }
 
-// Sample data matching your image
-const locationData: LocationItem[] = [
+const userDetails: UserDetail[] = [
   {
     id: 1,
-    state: "New York",
-    city: "Coney Island",
-    country: "United States of America",
+    name: "John Doe",
+    email: "john@example.com",
+    subscription: "Most Popular",
+    transactionId: "#12548796",
+    joinDate: "Apr 12, 2025",
+    status: "Active",
+    lastActivity: "2 min ago",
+    action: "Details",
   },
   {
     id: 2,
-    state: "New Mexico",
-    city: "Truth or Consequences",
-    country: "United States of America",
+    name: "Jane Smith",
+    email: "jane@example.com",
+    subscription: "Family",
+    transactionId: "#12548796",
+    joinDate: "Apr 12, 2025",
+    status: "Active",
+    lastActivity: "2 min ago",
+    action: "Details",
   },
   {
     id: 3,
-    state: "New York",
-    city: "East Hampton",
-    country: "United States of America",
+    name: "Mark Lee",
+    email: "mark@example.com",
+    subscription: "Basic",
+    transactionId: "#12548796",
+    joinDate: "Apr 12, 2025",
+    status: "Active",
+    lastActivity: "2 min ago",
+    action: "Details",
   },
   {
     id: 4,
-    state: "New Mexico",
-    city: "Silver City",
-    country: "United States of America",
-  },
-  {
-    id: 5,
-    state: "New Jersey",
-    city: "South Orange Village",
-    country: "United States of America",
-  },
-  {
-    id: 6,
-    state: "Massachusetts",
-    city: "Great Barrington",
-    country: "United States of America",
-  },
-  {
-    id: 7,
-    state: "California",
-    city: "Beverly Hills",
-    country: "United States of America",
+    name: "Mark Lee",
+    email: "mark@example.com",
+    subscription: "Basic",
+    transactionId: "#12548796",
+    joinDate: "Apr 12, 2025",
+    status: "Active",
+    lastActivity: "2 min ago",
+    action: "Details",
   },
 ];
 
@@ -61,30 +67,50 @@ const handleDeleteLocation = (id: number) => {
 };
 
 // Table columns
-const columns: ColumnDef<LocationItem>[] = [
+const columns: ColumnDef<UserDetail>[] = [
   {
-    accessorKey: "state",
-    header: "State",
-    cell: ({ row }) => <span className="">{row.original.state}</span>,
+    accessorKey: "name",
+    header: "Name",
+    cell: ({ row }) => <span className="">{row.original.name}</span>,
   },
   {
-    accessorKey: "city",
-    header: "City",
-    cell: ({ row }) => <span className="">{row.original.city}</span>,
+    accessorKey: "email",
+    header: "Email",
+    cell: ({ row }) => <span className="">{row.original.email}</span>,
   },
   {
-    accessorKey: "country",
-    header: "Country",
-    cell: ({ row }) => <span className="">{row.original.country}</span>,
+    accessorKey: "subscription",
+    header: "Subscription",
+    cell: ({ row }) => <span className="">{row.original.subscription}</span>,
+  },
+  {
+    accessorKey: "transactionId",
+    header: "Transaction ID",
+    cell: ({ row }) => <span className="">{row.original.transactionId}</span>,
+  },
+  {
+    accessorKey: "joinDate",
+    header: "Join Date",
+    cell: ({ row }) => <span className="">{row.original.joinDate}</span>,
+  },
+  {
+    accessorKey: "status",
+    header: "Status",
+    cell: ({ row }) => <span className="">{row.original.status}</span>,
+  },
+  {
+    accessorKey: "lastActivity",
+    header: "Last Activity",
+    cell: ({ row }) => <span className="">{row.original.lastActivity}</span>,
   },
   {
     id: "action",
     header: "Actions",
     cell: ({ row }) => (
       <div className="flex gap-4">
-        <>Delete</>
+        <>Details</>
+        {/* You can add actions here like delete or edit */}
         {/* <EditLocationModal item={row.original} id={row.original.id} />
-
         <DeleteModal
           item={row.original}
           onDelete={handleDeleteLocation}
@@ -99,8 +125,8 @@ export default function UsersTable() {
   // Pagination state
   const [page, setPage] = useState(1);
   const pageSize = 5;
-  const total = locationData.length;
-  const paginatedData = locationData.slice(
+  const total = userDetails.length;
+  const paginatedData = userDetails.slice(
     (page - 1) * pageSize,
     page * pageSize
   );
@@ -115,8 +141,11 @@ export default function UsersTable() {
           pageSize={pageSize}
           total={total}
           onPageChange={setPage}
-          //   addDataButton={<AddLocationModal />}
-        />
+        >
+          <h2 className="self-stretch text-[color:var(--W,#FFF)]  text-base font-medium leading-[160%]">
+            User Details
+          </h2>
+        </DataTable>
       </div>
     </div>
   );

@@ -15,31 +15,36 @@ import {
   Star,
   Settings,
   SettingsIcon,
+  Menu,
 } from "lucide-react";
 
 // Menu and Bottom items
 const menuItems = [
-  { href: "/dashboard", icon: <Home size={18} />, label: "Overview" },
+  { href: "/dashboard", icon: <Home size={18} />, label: "Dashboard" },
+  {
+    href: "/content-management",
+    icon: <Users size={18} />,
+    label: "Content Management",
+  },
+  {
+    href: "/dashboard/categories",
+    icon: <FileText size={18} />,
+    label: "Categories",
+  },
   {
     href: "/dashboard/users",
-    icon: <Users size={18} />,
-    label: "User list",
-  },
-  {
-    href: "/dashboard/procedures",
-    icon: <FileText size={18} />,
-    label: "Procedures",
-  },
-  {
-    href: "/dashboard/clinics",
     icon: <Hospital size={18} />,
-    label: "Clinic List",
+    label: "Users",
   },
-  { href: "/dashboard/blogs", icon: <Edit size={18} />, label: "Blogs" },
   {
-    href: "/dashboard/review-list",
+    href: "/dashboard/subscriptions",
+    icon: <Edit size={18} />,
+    label: "Subscription",
+  },
+  {
+    href: "/dashboard/live-streaming",
     icon: <Star size={18} />,
-    label: "Review List",
+    label: "Live Streaming",
   },
   { href: "/dashboard/others", icon: <Star size={18} />, label: "Others" },
   { href: "/dashboard/setting", icon: <SettingsIcon size={18} />, label: "Setting" },
@@ -206,10 +211,11 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
             onClick={toggleSidebar}
             className="text-main focus:outline-none"
           >
-            {/* <HiOutlineMenuAlt1 size={26} /> */}H
+            {/* <HiOutlineMenuAlt1 size={26} /> */}
+            <Menu />
           </button>
         </div>
-        <div className="border-b mx-4">
+        <div className=" mx-4 border-b-[color:var(--Line-Color,#1B202C)] px-0  border-b border-solid">
           <TopBar />
         </div>
         <div className="p-4 ">{children}</div>
