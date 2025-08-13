@@ -6,6 +6,12 @@
 @theme inline {
   --color-primary-color: #7a24bc;
 
+  --color-btn-secondary-bg: #7a24bc33;
+  --color-secondary-bg: #131824;
+
+  --color-gray3-bg: #1b202c;
+  --color-gray3-border: #181e2a;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-sidebar-ring: var(--sidebar-ring);
@@ -123,4 +129,58 @@
 
 body {
   font-family: var(--font-inter);
+}
+
+/* tabs wrapper custom scrollbar */
+.tabs_wrapper {
+  scrollbar-width: thin;
+  scrollbar-color: #4b5563 #1f2937;
+}
+
+.tabs_wrapper::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+.tabs_wrapper::-webkit-scrollbar-track {
+  background-color: #1f2937;
+}
+
+.tabs_wrapper::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+  border-radius: 10px;
+}
+
+.tabs_wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: #2d3748;
+}
+
+/* Custom Switch */
+.custom-switch.data-\[state\=checked\]\:bg-primary[data-state="checked"] {
+  background-color: var(--color-primary-color);
+}
+
+/* Setting Dialog */
+
+.settingDialog > button {
+  outline: none;
+  box-shadow: none;
+  height: 35px;
+  width: 35px;
+  border-radius: 50%;
+  background-color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  cursor: pointer;
+}
+
+.settingDialog > button > svg {
+  height: 22px;
+  width: 22px;
+}
+
+.settingDialog > button .focus\:ring-2:focus {
+  box-shadow: none !important;
 }

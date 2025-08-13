@@ -14,6 +14,7 @@ import {
   Edit,
   Star,
   Settings,
+  SettingsIcon,
 } from "lucide-react";
 
 // Menu and Bottom items
@@ -41,6 +42,7 @@ const menuItems = [
     label: "Review List",
   },
   { href: "/dashboard/others", icon: <Star size={18} />, label: "Others" },
+  { href: "/dashboard/setting", icon: <SettingsIcon size={18} />, label: "Setting" },
 ];
 
 const bottomMenu = [
