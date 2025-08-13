@@ -1,32 +1,58 @@
-import { Checkbox } from "@/components/ui/checkbox";
+"use client";
+
+import EyeIcon from "@/components/icons/EyeIcon";
+import EyeSlash from "@/components/icons/EyeSlash";
+import SocialBtn from "@/components/pages/auth/SocialBtn";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import Link from "next/link";
+import React from "react";
 
 export default function SignIn() {
+
+  const [type, setType] = React.useState<'password' | 'text'>('password');
+
+
   return (
-     <div className="grid lg:grid-cols-2 gap-16 items-center px-4 h-auto md:min-h-screen">
+     <div className="grid lg:grid-cols-2 gap-16 items-center min-h-screen">
         <div className="text-white py-10 max-w-[500px] lg:max-w-full mx-auto lg:mx-0">
-            <Image src='/images/logo.png' height={300} width={300} alt="Logo" className="w-[216px] h-[80px] block mx-auto" />
+
+            <Link href='/auth'>
+               <Image src='/images/logo.png' height={300} width={300} alt="Logo" className="w-[216px] h-[80px] block mx-auto" />
+            </Link>
+
             <div className="h-10 lg:h-20"></div>
             <p className="text-sm font-normal">Hey! Welcome</p>
 
             <div className="mt-4 mb-8">
                 <h1 className="text-[28px] font-medium">Login to </h1>
-                <p className="text-base font-medium">Please login to continue to your account.</p>
+                <p className="text-base font-normal">Please login to continue to your account.</p>
             </div>
 
             {/* Login Form */}
-            <form action="">
+            <form>
                 <div className="mb-4">
                     <Label className="font-base font-medium mb-3">Email</Label>
-                    <Input className="h-[40px] w-full px-4 py-3 text-sm font-medium border border-[#4A4C56] rounded-[8px] outline-none focus-visible:ring-0" placeholder="Enter Email Address"/>
+                    <Input className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#4A4C56] rounded-[8px] outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter Email Address"/>
                 </div>
 
                 <div className="mb-4">
                     <Label className="font-base font-medium mb-3">Password</Label>
-                    <Input className="h-[40px] w-full px-4 py-3 text-sm font-medium border border-[#4A4C56] rounded-[8px] outline-none focus-visible:ring-0 " placeholder="Enter your password"/>
+                    <div className="relative">
+                      <Input type={type} className="h-[40px] w-full px-4 pr-10 py-3 text-sm font-normal border border-[#4A4C56] rounded-[8px] outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter your password"/>
+                     
+                      <button
+                        type="button"
+                        onClick={() => setType(type === "password" ? "text" : "password")}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 cursor-pointer"
+                      >
+                        {
+                            type === "password" ?
+                            <EyeIcon className="h-5 w-5" /> :  <EyeSlash className="h-5 w-5"/>
+                        }
+                      </button>
+                    </div>
                 </div>
 
                 <div className="flex items-center justify-between mb-12">
@@ -53,18 +79,9 @@ export default function SignIn() {
 
             {/* Social Login */}
             <div className="flex flex-wrap items-center justify-center gap-4">
-               <button className="bg-[#E9EEFA] flex items-center gap-2 justify-center text-gray-900 px-[35px] lg:px-[25px] xl:px-[35px] py-[10px] rounded cursor-pointer">
-                   <Image src='/icons/google.png' height={20} width={20} alt="Google Icon" />
-                   <span>Google</span>
-                </button> 
-               <button className="bg-[#E9EEFA]  flex items-center gap-2 justify-center text-gray-900 px-[35px] lg:px-[25px] xl:px-[35px] py-[10px] rounded cursor-pointer">
-                   <Image src='/icons/apple.svg' height={20} width={20} alt="Google Icon" />
-                   <span>Apple</span>
-                </button> 
-               <button className="bg-[#E9EEFA]  flex items-center gap-2 justify-center text-gray-900 px-[35px] lg:px-[25px] xl:px-[35px] py-[10px] rounded cursor-pointer">
-                    <Image src='/icons/facebook.svg' height={20} width={20} alt="Google Icon" />
-                   <span>Facebook</span>
-                </button> 
+              <SocialBtn image="/icons/google.png" label="Google" />
+              <SocialBtn image="/icons/apple.svg" label="Apple" />
+              <SocialBtn image="/icons/facebook.svg" label="Facebook" />
             </div>
 
         </div>
