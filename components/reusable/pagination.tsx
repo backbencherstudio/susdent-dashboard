@@ -16,7 +16,7 @@ interface PaginationsProps {
 }
 
 export function Paginations({
-  page = 1,
+  page = 0,
   pageSize = 5,
   total = 0,
   onPageChange,
@@ -33,6 +33,7 @@ export function Paginations({
     }
   };
 
+  if (!page ) return null;
   return (
     <Pagination className="flex items-center justify-center">
       <PaginationContent>

@@ -23,6 +23,8 @@ import { Pagination } from "../ui/pagination";
 import { Paginations } from "./pagination";
 
 interface DataTableProps<TData, TValue> {
+  children?: React.ReactNode;
+  tableBar?: React.ReactNode;
   tableTitle?: string;
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
@@ -36,6 +38,8 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<TData, TValue>({
+  children,
+  tableBar,
   tableTitle,
   addDataButton,
   columns,
@@ -54,13 +58,15 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="rounded-md bg-[#0D121E] text-white space-y-4">
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between rounded-md px-6 pt-4 gap-3">
-        <h2 className="text-lg font-semibold text-white">
-          {tableTitle || "Test Table"}
-        </h2>
-        <>
-          {/* {addDataButton || (
+    <div className="rounded-md bg-[#131824] text-white ">
+      {/* table top bar */}
+      {children && <div className="px-4 pt-4 mb-2">{children}</div>}
+      {/* <div className="flex flex-col md:flex-row items-start md:items-center justify-between rounded-md px-6 pt-4 gap-3"> */}
+      {/* <h2 className="text-lg font-semibold text-white">
+          {tableTitle}
+        </h2> */}
+      <>
+        {/* {addDataButton || (
             <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-100">
@@ -82,13 +88,16 @@ export function DataTable<TData, TValue>({
               </Button>
             </div>       
           )} */}
-        </>
-      </div>
-      <div className="mx-6  overflow-hidden ">
+      </>
+      {/* </div> */}
+      <div className="mx-4  overflow-hidden ">
         <Table className="">
           <TableHeader className=" ">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow className="hover:bg-[#131824] border-[#1B202C]" key={headerGroup.id}>
+              <TableRow
+                className="hover:bg-[#131824] border-[#1B202C]"
+                key={headerGroup.id}
+              >
                 {headerGroup.headers.map((header) => {
                   return (
                     <TableHead
