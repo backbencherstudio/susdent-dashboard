@@ -58,15 +58,16 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="rounded-md bg-[#131824] text-white ">
-      {/* table top bar */}
-      {children && <div className="px-4 pt-4 mb-2">{children}</div>}
-      {/* <div className="flex flex-col md:flex-row items-start md:items-center justify-between rounded-md px-6 pt-4 gap-3"> */}
-      {/* <h2 className="text-lg font-semibold text-white">
+    <div>
+      <div className="rounded-md bg-[#131824] text-white ">
+        {/* table top bar */}
+        {children && <div className="px-4 pt-4 mb-2">{children}</div>}
+        {/* <div className="flex flex-col md:flex-row items-start md:items-center justify-between rounded-md px-6 pt-4 gap-3"> */}
+        {/* <h2 className="text-lg font-semibold text-white">
           {tableTitle}
         </h2> */}
-      <>
-        {/* {addDataButton || (
+        <>
+          {/* {addDataButton || (
             <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-100">
@@ -88,66 +89,67 @@ export function DataTable<TData, TValue>({
               </Button>
             </div>       
           )} */}
-      </>
-      {/* </div> */}
-      <div className="mx-4  overflow-hidden ">
-        <Table className="">
-          <TableHeader className=" ">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow
-                className="hover:bg-[#131824] border-[#1B202C]"
-                key={headerGroup.id}
-              >
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead
-                      key={header.id}
-                      className="font-semibold  p-4 text-[#fff] "
-                    >
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
+        </>
+        {/* </div> */}
+        <div className="mx-4  overflow-hidden ">
+          <Table className="">
+            <TableHeader className=" ">
+              {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                  className="text-[#A5A5AB] hover:bg-[#131824] border-[#1B202C]"
+                  className="hover:bg-[#131824] border-[#1B202C]"
+                  key={headerGroup.id}
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell className="p-4 " key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <TableHead
+                        key={header.id}
+                        className="font-semibold  p-4 text-[#fff] "
+                      >
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                      </TableHead>
+                    );
+                  })}
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              ))}
+            </TableHeader>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    className="text-[#A5A5AB] hover:bg-[#131824] border-[#1B202C]"
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell className="p-4 " key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
       </div>
-      <div>
+      <div className="my-6">
         <Paginations
           page={page}
           pageSize={pageSize}
