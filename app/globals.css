@@ -11,6 +11,7 @@
 
   --color-gray3-bg: #1b202c;
   --color-gray3-border: #181e2a;
+  --color-red-bg: #e70d0d;
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
@@ -183,4 +184,9 @@ body {
 
 .settingDialog > button .focus\:ring-2:focus {
   box-shadow: none !important;
+}
+
+/* Notification Dialog */
+.notification-dialog > button {
+  @apply hidden;
 }

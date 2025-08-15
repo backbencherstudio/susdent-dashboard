@@ -328,7 +328,6 @@ export default function Setting() {
 
     {/* Security Details */}
     <div className='bg-secondary-bg p-4 rounded-[8px] mt-4'>
-        
         {/* Password */}
         <div className="py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[#1B202C]">
             <div className="w-full sm:w-[60%]">
