@@ -7,7 +7,6 @@ export default function ContentManagement() {
     <div className="space-y-4">
       {/* title */}
       <ContentManagementTitle />
-
       {/* filter and table  */}
       <div>
         <ContentTable />
