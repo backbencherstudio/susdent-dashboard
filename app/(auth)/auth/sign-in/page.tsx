@@ -67,7 +67,9 @@ export default function SignIn() {
                     <Link href="/auth/forgot-password" className="text-sm font-[300] underline">Forgot Password?</Link>
                 </div>
 
-                <button type="submit" className="h-11 w-full rounded bg-primary-color font-base font-medium cursor-pointer">Log In</button>
+                <Link href='/dashboard'>
+                  <button type="submit" className="h-11 w-full rounded bg-primary-color font-base font-medium cursor-pointer">Log In</button>
+                </Link>
             </form>
 
             {/* Separator */}

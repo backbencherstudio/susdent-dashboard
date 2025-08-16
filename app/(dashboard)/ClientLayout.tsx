@@ -14,6 +14,7 @@ import {
   Edit,
   Star,
   Settings,
+  SettingsIcon,
   Menu,
 } from "lucide-react";
 
@@ -45,6 +46,8 @@ const menuItems = [
     icon: <Star size={18} />,
     label: "Live Streaming",
   },
+  { href: "/dashboard/others", icon: <Star size={18} />, label: "Others" },
+  { href: "/dashboard/setting", icon: <SettingsIcon size={18} />, label: "Setting" },
 ];
 
 const bottomMenu = [

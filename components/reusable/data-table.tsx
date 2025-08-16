@@ -37,7 +37,7 @@ interface DataTableProps<TData, TValue> {
   open?: boolean;
 }
 
-export function      nDataTable<TData, TValue>({
+export function   DataTable<TData, TValue>({
   children,
   tableBar,
   tableTitle,

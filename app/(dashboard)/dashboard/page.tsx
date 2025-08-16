@@ -6,8 +6,6 @@ import { DataTable } from "@/components/reusable/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import React, { useState } from "react";
 
-
-
 export default function page() {
 
   return (
