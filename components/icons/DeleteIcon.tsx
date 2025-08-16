@@ -1,26 +1,17 @@
 import React from "react";
 
-export default function DeleteIcon() {
+interface IconProps {
+  className?: string;
+  size?: number | string;
+}
+
+export default function DeleteIcon({ className, size = 24 }: IconProps) {
   return (
-    <svg
-      width="16"
-      height="16"
-      viewBox="0 0 16 16"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <path
-        d="M13 3.6665L12.5868 10.3499C12.4813 12.0575 12.4285 12.9113 12.0005 13.5251C11.7889 13.8286 11.5164 14.0847 11.2005 14.2772C10.5614 14.6665 9.70599 14.6665 7.99516 14.6665C6.28208 14.6665 5.42554 14.6665 4.78604 14.2765C4.46987 14.0836 4.19733 13.827 3.98579 13.5231C3.55792 12.9082 3.5063 12.0532 3.40307 10.3433L3 3.6665"
-        stroke="white"
-        strokeLinecap="round"
-      />
-      <path d="M6 7.82324H10" stroke="white" strokeLinecap="round" />
-      <path d="M7 10.436H9" stroke="white" strokeLinecap="round" />
-      <path
-        d="M2 3.66683H14M10.7037 3.66683L10.2486 2.72798C9.94626 2.10433 9.7951 1.79251 9.53435 1.59803C9.47651 1.5549 9.41527 1.51652 9.35122 1.4833C9.06248 1.3335 8.71595 1.3335 8.02289 1.3335C7.31243 1.3335 6.95719 1.3335 6.66366 1.48958C6.59861 1.52417 6.53653 1.56409 6.47807 1.60894C6.2143 1.8113 6.06696 2.13453 5.77228 2.781L5.36849 3.66683"
-        stroke="white"
-        strokeLinecap="round"
-      />
-    </svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="none" className={className}>
+<path d="M13 3.6665L12.5868 10.3499C12.4813 12.0575 12.4285 12.9113 12.0005 13.5251C11.7889 13.8286 11.5164 14.0847 11.2005 14.2772C10.5614 14.6665 9.70599 14.6665 7.99516 14.6665C6.28208 14.6665 5.42554 14.6665 4.78604 14.2765C4.46987 14.0836 4.19733 13.827 3.98579 13.5231C3.55792 12.9082 3.5063 12.0532 3.40307 10.3433L3 3.6665" stroke="currentColor" strokeLinecap="round"/>
+<path d="M6 7.82324H10" stroke="currentColor" strokeLinecap="round"/>
+<path d="M7 10.436H9" stroke="currentColor" strokeLinecap="round"/>
+<path d="M2 3.66683H14M10.7037 3.66683L10.2486 2.72798C9.94626 2.10433 9.7951 1.79251 9.53435 1.59803C9.47651 1.5549 9.41527 1.51652 9.35122 1.4833C9.06248 1.3335 8.71595 1.3335 8.02289 1.3335C7.31243 1.3335 6.95719 1.3335 6.66366 1.48958C6.59861 1.52417 6.53653 1.56409 6.47807 1.60894C6.2143 1.8113 6.06696 2.13453 5.77228 2.781L5.36849 3.66683" stroke="currentColor" strokeLinecap="round"/>
+</svg>
   );
 }

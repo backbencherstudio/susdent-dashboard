@@ -34,6 +34,13 @@ const videoData: VideoDetails[] = [
     duration: "1h 55m",
     views: "25K",
   },
+  {
+    id: 4,
+    type: "Series",
+    uploadDate: "Apr 16, 2025",
+    duration: "1h 55m",
+    views: "25K",
+  },
 ];
 //
 const columns: ColumnDef<VideoDetails>[] = [
@@ -61,7 +68,7 @@ const columns: ColumnDef<VideoDetails>[] = [
 
 export default function LatestUploadsTable() {
   return (
-    <div className="rounded-lg mt-4">
+    <div className="rounded-lg mt-4 ">
       <DataTable columns={columns} data={videoData} >
         <div className="flex items-center justify-between">
           <h2 className="text-[color:var(--W,#FFF)] text-base font-medium leading-[160%]">

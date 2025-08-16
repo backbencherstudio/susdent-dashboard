@@ -4,6 +4,15 @@ import EditIcon from "@/components/icons/EditIcon";
 import { DataTable } from "@/components/reusable/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import React, { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface VideoDetail {
   id: number;
@@ -182,10 +191,51 @@ export default function ContentTable() {
     page * pageSize
   );
   return (
-    <div>
+    <>
       {/* filter */}
-      {/* table */}
+      <div className="mb-4 flex gap-4">
+        <Select>
+          <SelectTrigger className="flex items-center gap-2 rounded border border-[color:var(--Gray-Black-50,#E9E9EA)] [background:#0D121E] px-5 py-2.5 border-solid ">
+            <SelectValue
+              className="text-white [font-family:Inter] text-sm font-normal leading-[100%]"
+              placeholder="Genre"
+            />
+          </SelectTrigger>
+          <SelectContent className="border border-[color:var(--Line-Color,#1B202C)] [background:#0D121E] p-3 border-solid text-white [font-family:Inter] text-sm font-normal leading-[100%]">
+            <SelectGroup className="space-y-2">
+              {/* <SelectLabel>Fruits</SelectLabel> */}
+              <SelectItem className="selectOption" value="action">
+                Action
+              </SelectItem>
+              <SelectItem className="selectOption" value="comedy">
+                Comedy
+              </SelectItem>
+              <SelectItem className="selectOption" value="drama">
+                Drama
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
 
+        {/* 2nd */}
+        <Select>
+          <SelectTrigger className="rounded">
+            <SelectValue placeholder="Select a fruit" />
+          </SelectTrigger>
+          <SelectContent className="border border-[color:var(--Line-Color,#1B202C)] [background:#0D121E] rounded">
+            <SelectGroup>
+              <SelectLabel>Fruits</SelectLabel>
+              <SelectItem  className="selectOption" value="apple">Apple</SelectItem>
+              <SelectItem value="banana">Banana</SelectItem>
+              <SelectItem value="blueberry">Blueberry</SelectItem>
+              <SelectItem value="grapes">Grapes</SelectItem>
+              <SelectItem value="pineapple">Pineapple</SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* table */}
       <div>
         <DataTable
           columns={columns}
@@ -196,6 +246,6 @@ export default function ContentTable() {
           onPageChange={setPage}
         />
       </div>
-    </div>
+    </>
   );
 }
