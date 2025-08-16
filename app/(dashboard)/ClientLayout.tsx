@@ -16,7 +16,11 @@ import {
   Settings,
   SettingsIcon,
   Menu,
+  Bell,
 } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import SearchIcon from "@/components/icons/SearchIcon";
+import BellIcon from "@/components/icons/BellIcon";
 
 // Menu and Bottom items
 const menuItems = [
@@ -27,7 +31,7 @@ const menuItems = [
     label: "Content Management",
   },
   {
-    href: "/dashboard/categories",
+    href: "/categories",
     icon: <FileText size={18} />,
     label: "Categories",
   },
@@ -47,15 +51,14 @@ const menuItems = [
     label: "Live Streaming",
   },
   { href: "/dashboard/others", icon: <Star size={18} />, label: "Others" },
-  { href: "/dashboard/setting", icon: <SettingsIcon size={18} />, label: "Setting" },
+  {
+    href: "/dashboard/setting",
+    icon: <SettingsIcon size={18} />,
+    label: "Setting",
+  },
 ];
 
 const bottomMenu = [
-  {
-    href: "/dashboard/settings",
-    icon: <Settings size={18} />,
-    label: "Settings",
-  },
   {
     href: "/logout",
     click: true,
@@ -106,6 +109,31 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
     return (
       <div className=" text-main p-4 flex items-center justify-between ">
         <div className="font-semibold text-2xl">{"Welcome, Admin"}</div>
+
+        <div className="flex items-center ">
+          <div className="relative mr-8 ">
+            <Input
+              className="flex w-auto lg:w-[330px] justify-between items-center border border-[color:var(--Line-Color,#1B202C)] px-4 py-[9px] rounded-lg border-solid focus:node h-[44px]"
+              placeholder="Search"
+            />
+            <SearchIcon className=" absolute bottom-[12.5px]  right-4" />
+          </div>
+          <div className="flex w-12 h-12 items-center gap-2.5 [background:#181A25] justify-center rounded-3xl mr-4">
+            <BellIcon />
+          </div>
+
+          <div>
+            <div className="flex-shrink-0 rounded-full">
+              <Image
+                className="w-12 h-12 rounded-full"
+                src={user?.data?.avatar_url || "/images/profile.png"}
+                width={48}
+                height={48}
+                alt="User"
+              />
+            </div>
+          </div>
+        </div>
       </div>
     );
   };
@@ -176,8 +204,8 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
                   // onClick={item.click ? handleLogout : undefined}
                   className={`flex items-center text-base font-medium px-4 py-3 rounded-md gap-1 ${
                     isActive
-                      ? "bg-[#E7F2F8] primary-text font-medium"
-                      : "text-main hover:bg-gray-100"
+                      ? "bg-[#7A24BC] primary-text font-medium"
+                      : "text-main hover:bg-[#7A24BC]/50"
                   }`}
                 >
                   {item.icon}
@@ -186,7 +214,8 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
               </div>
             );
           })}
-          <div className="flex items-center p-4">
+
+          {/* <div className="flex items-center p-4">
             <div className="flex-shrink-0">
               <Image
                 className="w-10 h-10 rounded-full"
@@ -200,7 +229,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
               <p className="text-sm font-medium">{user?.data?.name}</p>
               <p className="text-xs text-gray-500">{user?.data?.email}</p>
             </div>
-          </div>
+          </div> */}
         </div>
       </div>
 

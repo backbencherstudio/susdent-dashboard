@@ -58,7 +58,7 @@ export function   DataTable<TData, TValue>({
   });
 
   return (
-    <div>
+    <div className="">
       <div className="rounded-md bg-[#131824] text-white ">
         {/* table top bar */}
         {children && <div className="px-4 pt-4 mb-2">{children}</div>}

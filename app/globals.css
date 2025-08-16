@@ -190,3 +190,7 @@ body {
 .notification-dialog > button {
   @apply hidden;
 }
+
+.selectOption {
+  @apply border-[#1B202C] px-2.5 py-[9px] rounded-sm border text-center flex items-center justify-center ;
+}
