@@ -1,4 +1,6 @@
 "use client";
+import DeleteIcon from "@/components/icons/DeleteIcon";
+import EditIcon from "@/components/icons/EditIcon";
 import { DataTable } from "@/components/reusable/data-table";
 import { ColumnDef } from "@tanstack/react-table";
 import React, { useState } from "react";
@@ -160,8 +162,12 @@ const columns: ColumnDef<VideoDetail>[] = [
     header: "Actions",
     cell: ({ row }) => (
       <div className="flex gap-4">
-        <button>Edit</button>
-        <button>Delete</button>
+        <button>
+          <EditIcon />
+        </button>
+        <button>
+          <DeleteIcon />
+        </button>
       </div>
     ),
   },
