@@ -141,7 +141,7 @@ export default function Notification() {
                 {groupedNotifications[group].map((notification) => (
                     <div
                         key={notification.id}
-                        className="py-4 my-4 flex items-center justify-between gap-5 border-b border-[#1F2430]"
+                        className="py-4 my-4 flex flex-wrap md:flex-nowrap items-center justify-between gap-5 border-b border-[#1F2430]"
                     >
                         <div className="flex items-center gap-6">
                             <input
@@ -162,8 +162,8 @@ export default function Notification() {
                                 </div>
                             </div>
                         </div>
-                        <div className="flex items-center gap-3">
-                            <p className="text-xs font-normal">{notification.user.time}</p>
+                        <div className="flex items-center justify-end w-full md:w-fit gap-3">
+                            <p className="text-xs font-normal whitespace-nowrap">{notification.user.time}</p>
                             { handleDelete() }
                         </div>
                     </div>

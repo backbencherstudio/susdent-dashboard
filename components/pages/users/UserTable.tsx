@@ -291,7 +291,7 @@ const columns: ColumnDef<UserDetail>[] = [
     header: "Actions",
     cell: ({ row }) => (
       <div className="flex gap-4">
-        <Link  className="bg-primary-color text-white px-[14px] py-[7px] rounded-[2px]" href={`/users/${row.original.id}`}>
+        <Link  className="bg-primary-color text-white px-[14px] py-[7px] rounded-[2px]" href={`/dashboard/users/${row.original.id}`}>
            Details  
         </Link>
       </div>

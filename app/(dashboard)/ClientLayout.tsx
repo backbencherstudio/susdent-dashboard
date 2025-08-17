@@ -1,5 +1,5 @@
 "use client";
-import React, { ReactNode, useState } from "react";
+import React, { ReactNode, useEffect, useRef, useState } from "react";
 import logo from "@/public/logo.svg";
 import Link from "next/link";
 import Image from "next/image";
@@ -7,53 +7,56 @@ import { usePathname } from "next/navigation";
 
 // Importing Lucide Icons
 import {
-  Home,
-  Users,
-  FileText,
-  Hospital,
-  Edit,
-  Star,
-  Settings,
-  SettingsIcon,
   Menu,
-  Bell,
 } from "lucide-react";
+
 import { Input } from "@/components/ui/input";
 import SearchIcon from "@/components/icons/SearchIcon";
 import BellIcon from "@/components/icons/BellIcon";
+import Dashboard from "@/components/icons/Dashboard";
+import Content from "@/components/icons/Content";
+import Categories from "@/components/icons/Categories";
+import Users from "@/components/icons/Users";
+import Subscription from "@/components/icons/Subscription";
+import Streaming from "@/components/icons/Streaming";
+import Setting from "@/components/icons/Setting";
+import Logout from "@/components/icons/Logout";
+import TrashBin from "@/components/icons/TrashBin";
 
 // Menu and Bottom items
 const menuItems = [
-  { href: "/dashboard", icon: <Home size={18} />, label: "Dashboard" },
+  { 
+    href: "/dashboard", 
+    icon: <Dashboard className="w-[18px] h-[18px]"/>,
+    label: "Dashboard" },
   {
-    href: "/content-management",
-    icon: <Users size={18} />,
+    href: "/dashboard/content-management",
+    icon: <Content className="w-[18px] h-[18px]"/>,
     label: "Content Management",
   },
   {
-    href: "/categories",
-    icon: <FileText size={18} />,
+    href: "/dashboard/categories",
+    icon: <Categories className="w-[18px] h-[18px]"/>,
     label: "Categories",
   },
   {
     href: "/dashboard/users",
-    icon: <Hospital size={18} />,
+    icon: <Users className="w-[18px] h-[18px]"/>,
     label: "Users",
   },
   {
     href: "/dashboard/subscriptions",
-    icon: <Edit size={18} />,
+    icon: <Subscription className="w-[18px] h-[18px]"/>,
     label: "Subscription",
   },
   {
     href: "/dashboard/live-streaming",
-    icon: <Star size={18} />,
+    icon: <Streaming className="w-[18px] h-[18px]"/>,
     label: "Live Streaming",
   },
-  { href: "/dashboard/others", icon: <Star size={18} />, label: "Others" },
   {
     href: "/dashboard/setting",
-    icon: <SettingsIcon size={18} />,
+    icon: <Setting className="w-[18px] h-[18px]"/>,
     label: "Setting",
   },
 ];
@@ -61,41 +64,29 @@ const menuItems = [
 const bottomMenu = [
   {
     href: "/logout",
-    click: true,
-    icon: (
-      <svg
-        xmlns="http://www.w3.org/2000/svg"
-        width="18"
-        height="19"
-        viewBox="0 0 18 19"
-        fill="none"
-      >
-        <path
-          d="M10.5 14.3751L10.2315 15.1807C9.96675 15.975 9.10313 16.3987 8.31293 16.1222L3.75671 14.5275C2.85427 14.2116 2.25 13.3599 2.25 12.4038V6.59646C2.25 5.64034 2.85427 4.78864 3.75671 4.47278L8.31293 2.8781C9.10313 2.60154 9.96675 3.02533 10.2315 3.81955L10.5 4.62513"
-          stroke="#151623"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-        <path
-          d="M13.875 7.625L15.75 9.5L13.875 11.375M7.5 9.5H15.2934"
-          stroke="#151623"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        />
-      </svg>
-    ),
+    icon: <Logout className="w-[18px] h-[18px]"/>,
     label: "Log out",
   },
 ];
 
+interface NotificationData {
+  id: number,
+  image: string,
+  name: string,
+  time: string
+}
+
 export default function ClientLayout({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const [notificationOpen, setNotificationOpen] = useState(false);
+
   const pathname = usePathname();
 
   // Fake user data (since we're not fetching real data)
   const user = {
     data: {
-      avatar_url: "/images/profile.png",
+      avatar_url: "/images/user-profile.svg",
       name: "John Doe",
       email: "john.doe@example.com",
     },
@@ -105,28 +96,101 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
     setSidebarOpen(!sidebarOpen);
   };
 
+  // Notification Data
+  const notificationData: NotificationData[] = [
+    {
+      id: 1,
+      image: "/images/user-profile.svg",
+      name: "Darrell Steward",
+      time: "30 mn ago",
+    },
+     {
+      id: 2,
+      image: "/images/user-profile.svg",
+      name: "Darrell Steward",
+      time: "30 mn ago",
+    },
+     {
+      id: 3,
+      image: "/images/user-profile.svg",
+      name: "Darrell Steward",
+      time: "30 mn ago",
+    }
+  ]
+
+
+  // Toggle the notification modal
+  const toggleNotification = (event: any) => {
+    event.stopPropagation();
+    setNotificationOpen((prev) => !prev);
+  };
+
+
   const TopBar = () => {
     return (
-      <div className=" text-main p-4 flex items-center justify-between ">
-        <div className="font-semibold text-2xl">{"Welcome, Admin"}</div>
+      <div className="lg:p-4 flex items-center justify-between">
+        <div className="font-semibold text-2xl hidden lg:block">{"Welcome, Admin"}</div>
 
         <div className="flex items-center ">
-          <div className="relative mr-8 ">
+          <div className="relative mr-8 hidden sm:block">
             <Input
-              className="flex w-auto lg:w-[330px] justify-between items-center border border-[color:var(--Line-Color,#1B202C)] px-4 py-[9px] rounded-lg border-solid focus:node h-[44px]"
+              className="flex w-auto lg:w-[330px] justify-between items-center border border-[color:var(--Line-Color,#1B202C)] px-4 py-[9px] rounded-lg border-solid h-[44px] shadow-none outline-none focus-visible:ring-0 focus-visible:border-primary-color"
               placeholder="Search"
             />
-            <SearchIcon className=" absolute bottom-[12.5px]  right-4" />
+            <SearchIcon className="absolute bottom-[12.5px] right-4" />
           </div>
-          <div className="flex w-12 h-12 items-center gap-2.5 [background:#181A25] justify-center rounded-3xl mr-4">
-            <BellIcon />
+          <div className="mr-4 relative">
+            <div className="flex w-12 h-12 items-center gap-2.5 bg-[#7A24BC33] justify-center rounded-3xl cursor-pointer" onClick={toggleNotification}>
+              <BellIcon/>
+            </div>
+
+            <div>
+            {/* Notification Modal */}
+            {
+              notificationOpen && (
+                <div className="absolute top-[115%] -right-18 sm:right-0 w-[300px] sm:w-[400px] bg-gray3-border border border-[#1F2430] rounded-sm">
+                  {/* Top */}
+                  <div className="flex justify-between gap-2 p-4 border-b border-[#1F2430]">
+                    <h1 className="text-base font-semibold">Notification</h1>
+                    <p><span className="py-[7px] px-3 rounded-[2px] bg-[#7A24BC1F] text-xs font-medium">5 Unread</span></p>
+                  </div>
+                  {/* Middle */}
+                  <div>
+                    {
+                      notificationData.map((notification) =>  {
+                        return (
+                          <div key={notification.id} className="p-4 flex items-center justify-between border-b border-[#1F2430]">
+                            <div className="flex items-center gap-2">
+                              <Image src={notification.image} height={300} width={300} alt="Profile" className="h-12 w-12 rounded-full" />
+                              <div>
+                                <h1 className="text-sm font-medium">{notification.name}</h1>
+                                <p className="text-xs mt-1">{notification.time}</p>
+                              </div>
+                            </div>
+                            <button className="cursor-pointer">
+                              <TrashBin/>
+                            </button>
+                          </div>
+                        )
+                      })
+                    }
+                  </div>
+                  {/* Bottom */}
+                  <div className="p-4">
+                    <Link href='/dashboard/setting/notification' className="bg-primary-color text-sm font-medium py-3 px-3 rounded w-full block text-center">View All Notifications</Link>
+                  </div>
+                </div>
+              )
+            }
+            </div>
+          
           </div>
 
           <div>
             <div className="flex-shrink-0 rounded-full">
               <Image
                 className="w-12 h-12 rounded-full"
-                src={user?.data?.avatar_url || "/images/profile.png"}
+                src={user?.data?.avatar_url || "/images/user-profile.svg"}
                 width={48}
                 height={48}
                 alt="User"
@@ -182,7 +246,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
                   className={`flex items-center text-base font-medium px-4 py-3 rounded-md gap-1 ${
                     isActive
                       ? "bg-[#7A24BC] primary-text font-medium"
-                      : "text-main hover:bg-[#7A24BC]/50"
+                      : "text-[#A5A5AB] hover:bg-[#7A24BC]/50"
                   }`}
                 >
                   {item.icon}
@@ -205,7 +269,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
                   className={`flex items-center text-base font-medium px-4 py-3 rounded-md gap-1 ${
                     isActive
                       ? "bg-[#7A24BC] primary-text font-medium"
-                      : "text-main hover:bg-[#7A24BC]/50"
+                      : "text-[#A5A5AB] hover:bg-[#7A24BC]/50"
                   }`}
                 >
                   {item.icon}
@@ -235,16 +299,17 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto lg:ml-64 ">
-        <div className="p-4 lg:hidden">
+        <div className="p-4 lg:hidden flex justify-between">
           <button
             onClick={toggleSidebar}
             className="text-main focus:outline-none"
-          >
-            {/* <HiOutlineMenuAlt1 size={26} /> */}
-            <Menu />
-          </button>
+          ><Menu /></button>
+
+          <div className="lg:hidden">
+            <TopBar />
+          </div>
         </div>
-        <div className=" mx-4 border-b-[color:var(--Line-Color,#1B202C)] px-0  border-b border-solid">
+        <div className="hidden lg:block mx-4 px-0 border-b border-[#1B202C]">
           <TopBar />
         </div>
         <div className="p-4 ">{children}</div>

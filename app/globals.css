@@ -192,5 +192,10 @@ body {
 }
 
 .selectOption {
-  @apply border-[#1B202C] px-2.5 py-[9px] rounded-sm border text-center flex items-center justify-center ;
+  @apply border-[#1B202C] px-2.5 py-[9px] rounded-sm border text-center flex items-center justify-center;
+}
+
+/* Users Tab */
+.usersTab .data-\[state\=active\]\:shadow-sm[data-state="active"] {
+  background-color: transparent;
 }

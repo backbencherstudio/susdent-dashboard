@@ -129,7 +129,7 @@ export default function Billing() {
                 <SelectTrigger className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color">
                     <SelectValue placeholder="Select" />
                 </SelectTrigger>
-                <SelectContent className="bg-secondary-bg text-white border border-primary-color rounded">
+                <SelectContent className="bg-secondary-bg text-white border border-slate-700 rounded">
                     <SelectItem value="USA" className="cursor-pointer">USA</SelectItem>
                     <SelectItem value="Mexico" className="cursor-pointer">Mexico</SelectItem>
                     <SelectItem value="France" className="cursor-pointer">France</SelectItem>
@@ -145,7 +145,7 @@ export default function Billing() {
                 <SelectTrigger className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color">
                     <SelectValue placeholder="Select" />
                 </SelectTrigger>
-                <SelectContent className="bg-secondary-bg text-white border border-primary-color rounded">
+                <SelectContent className="bg-secondary-bg text-white border border-slate-700 rounded">
                     <SelectItem value="State 1" className="cursor-pointer">State 1</SelectItem>
                     <SelectItem value="State 2" className="cursor-pointer">State 2</SelectItem>
                     <SelectItem value="State 3" className="cursor-pointer">State 3</SelectItem>
@@ -161,7 +161,7 @@ export default function Billing() {
                 <SelectTrigger className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color">
                     <SelectValue placeholder="Select" />
                 </SelectTrigger>
-                <SelectContent className="bg-secondary-bg text-white border border-primary-color rounded">
+                <SelectContent className="bg-secondary-bg text-white border border-slate-700 rounded">
                     <SelectItem value="Dhaka" className="cursor-pointer">Dhaka</SelectItem>
                     <SelectItem value="Chittagong" className="cursor-pointer">Chittagong</SelectItem>
                     <SelectItem value="Feni" className="cursor-pointer">Feni</SelectItem>

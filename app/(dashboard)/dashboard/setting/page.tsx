@@ -96,7 +96,7 @@ export default function Setting() {
                 <SelectTrigger className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
-                <SelectContent className="bg-secondary-bg text-white border border-primary-color rounded">
+                <SelectContent className="bg-secondary-bg text-white border border-slate-700 rounded">
                   <SelectItem value="English" className="cursor-pointer">English</SelectItem>
                   <SelectItem value="French" className="cursor-pointer">French</SelectItem>
                   <SelectItem value="German" className="cursor-pointer">German</SelectItem>
@@ -124,7 +124,7 @@ export default function Setting() {
                 <SelectTrigger className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color">
                   <SelectValue placeholder="Select" />
                 </SelectTrigger>
-                <SelectContent className="bg-secondary-bg text-white border border-primary-color rounded">
+                <SelectContent className="bg-secondary-bg text-white border border-slate-700 rounded">
                   <SelectItem value="Dhaka" className="cursor-pointer">Dhaka</SelectItem>
                   <SelectItem value="Chittagong" className="cursor-pointer">Chittagong</SelectItem>
                   <SelectItem value="Feni" className="cursor-pointer">Feni</SelectItem>
