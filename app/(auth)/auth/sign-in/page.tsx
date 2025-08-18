@@ -5,14 +5,42 @@ import EyeSlash from "@/components/icons/EyeSlash";
 import SocialBtn from "@/components/pages/auth/SocialBtn";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/provider/AuthProvider";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
 export default function SignIn() {
 
+  const {login} = useAuth();
+
   const [type, setType] = React.useState<'password' | 'text'>('password');
 
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+
+    let email = e.target.email.value;
+    let password = e.target.password.value;
+
+    const data = {
+      email, password
+    }
+    //console.log(data);
+    //console.log("This is login"+ login);
+
+
+    try {
+      const res = await login(data);
+      // if(dataInfo.success){
+      //   console.log(dataInfo)
+      //router.push("/dashboard/overview");
+      // }
+    } catch (error: any) {
+      //toast.error(error.message);
+      console.log(error);
+    }
+
+  }
 
   return (
      <div className="grid lg:grid-cols-2 gap-16 items-center min-h-screen">
@@ -31,16 +59,16 @@ export default function SignIn() {
             </div>
 
             {/* Login Form */}
-            <form>
+            <form onSubmit={handleSubmit}>
                 <div className="mb-4">
                     <Label className="font-base font-medium mb-3">Email</Label>
-                    <Input className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#4A4C56] rounded-[8px] outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter Email Address"/>
+                    <Input name="email" className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#4A4C56] rounded-[8px] outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter Email Address"/>
                 </div>
 
                 <div className="mb-4">
                     <Label className="font-base font-medium mb-3">Password</Label>
                     <div className="relative">
-                      <Input type={type} className="h-[40px] w-full px-4 pr-10 py-3 text-sm font-normal border border-[#4A4C56] rounded-[8px] outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter your password"/>
+                      <Input type={type} name="password" className="h-[40px] w-full px-4 pr-10 py-3 text-sm font-normal border border-[#4A4C56] rounded-[8px] outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter your password"/>
                      
                       <button
                         type="button"
@@ -67,9 +95,7 @@ export default function SignIn() {
                     <Link href="/auth/forgot-password" className="text-sm font-[300] underline">Forgot Password?</Link>
                 </div>
 
-                <Link href='/dashboard'>
-                  <button type="submit" className="h-11 w-full rounded bg-primary-color font-base font-medium cursor-pointer">Log In</button>
-                </Link>
+                <button type="submit" className="h-11 w-full rounded bg-primary-color font-base font-medium cursor-pointer">Log In</button>
             </form>
 
             {/* Separator */}
