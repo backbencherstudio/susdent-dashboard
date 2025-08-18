@@ -1,9 +1,26 @@
+"use client";
+
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import Link from "next/link";
+import { useForm } from "react-hook-form"
+
+interface formData {
+  email: string,
+}
 
 export default function ForgotPassword() {
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<formData>();
+
+  const onSubmit = async (data: formData) => {
+    console.log(data);
+  }
+    
   return (
     <div className="grid lg:grid-cols-2 gap-16 items-center min-h-screen">
         <div className="text-white py-10 max-w-[500px] lg:max-w-full mx-auto lg:mx-0">
@@ -20,18 +37,18 @@ export default function ForgotPassword() {
             </div>
 
             {/* Form */}
-            <form>
+            <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="mb-12">
                     <Label className="font-base font-medium mb-3">Email</Label>
-                    <Input className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#4A4C56] rounded-[8px] outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter Email Address"/>
+                    <Input {...register("email", { required: "Email is required",   pattern: {value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Please enter a valid email address"}})} className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#4A4C56] rounded-[8px] outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter Email Address"/>
+
+                    {errors.email && (
+                      <p className="error-msg">{errors.email.message}</p>
+                    )}
                 </div>
 
-                <Link href='/auth/verify-code'>
-                  <button type="submit" className="h-11 w-full rounded bg-primary-color font-base font-medium cursor-pointer">Send Email</button>
-                </Link>
+                <button type="submit" className="h-11 w-full rounded bg-primary-color font-base font-medium cursor-pointer">Send Email</button>
             </form>
-        
-
         </div>
         <div className="hidden lg:block">
             <Image src='/images/forgot-password-img.png' height={1000} width={1000} alt="Sign In Image" className="h-full w-full object-cover" />

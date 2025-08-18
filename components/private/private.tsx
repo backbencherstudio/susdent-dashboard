@@ -11,8 +11,8 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   // console.log("From private",user);
 
   useEffect(() => {
-    if (isLoading) return; // Wait for auth check to finish
     console.log(user);
+    if (isLoading) return; // Wait for auth check to finish
     if (!user) {
       console.log("User not found");
       router.replace("/auth");
