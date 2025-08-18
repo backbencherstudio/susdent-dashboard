@@ -40,28 +40,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
  
   // console.log("Inside auth context", user);
  
-  //   check user authencation on mount
- 
-  useEffect(() => {
-    const checkUser = async () => {
-      setIsLoading(true); // Start loading
-      const token = localStorage.getItem("authToken");
-      if (token) {
-        try {
-          const { data } = await privateAxios.get("/auth/me");
-          setUser(data?.data);
-        } catch (error) {
-          localStorage.removeItem("authToken");
-          setUser(null);
-          console.log("Auth error", error);
-        }
-      }
-      setIsLoading(false); // End loading (always runs)
-    };
- 
-    checkUser();
-  }, []);
- 
   // Login method
   const login = async (credentials: { email: string; password: string }) => {
     // console.log("Logging from context:", credentials);
@@ -69,23 +47,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await publicAxios.post("/users/login", credentials);
  
-      console.log(response);
-    //   const { authorization } = response.data;
-    //   localStorage.setItem("authToken", authorization.token);
-
-  
-      //return response.data;
- 
-      // Now, fetch user data after login
-    //   const { data } = await privateAxios.get("/auth/me");
-    //   setUser(data?.data);
+      const authorization = response.data;
+      localStorage.setItem("authToken", authorization.token);
+      setUser(authorization?.user);
+      return authorization;
       
-      // console.log("From context after login", data); data
     } catch (error: any) {
       setError(
         "Error from login: " +
           (error?.response?.data?.message || "Unknown error")
       );
+      setUser(null);
     } finally {
       setIsLoading(false);
     }

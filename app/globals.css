@@ -199,3 +199,8 @@ body {
 .usersTab .data-\[state\=active\]\:shadow-sm[data-state="active"] {
   background-color: transparent;
 }
+
+/* Error Message */
+.error-msg {
+  @apply text-[#e70d0d] text-sm my-1;
+}
