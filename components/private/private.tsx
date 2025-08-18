@@ -14,13 +14,14 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (isLoading) return; // Wait for auth check to finish
-
+    console.log(user);
     if (!user) {
       console.log("User not found");
-      router.replace("/auth/sign-in");
-    } else if (user?.type !== "admin") {
+      router.replace("/auth");
+    }
+    else if(user?.role !== "admin") {
       console.log("role not matched");
-      router.replace("/auth/sign-in"); // Or another fallback route
+      router.replace("/auth"); // Or another fallback route
     }
   }, [user, isLoading, router]);
 
@@ -28,7 +29,7 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
     return <div className="text-center p-10">Loading...</div>;
   }
 
-  if (user?.type !== "admin") {
+  if (user?.role !== "admin") {
     return null; // Or a message/component for unauthorized access
   }
 

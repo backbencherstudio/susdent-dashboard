@@ -9,43 +9,89 @@ import { useAuth } from "@/provider/AuthProvider";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
-import React from "react";
+import { Controller, useForm } from "react-hook-form"
+
+interface formData {
+  email: string,
+  password: string,
+  remember_me: boolean
+}
+
+//get cookie if there
+function getCookie(name: string): string {
+  if (typeof document === "undefined") return "";
+
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(";").shift() || "";
+  return "";
+}
 
 export default function SignIn() {
 
-  const {login} = useAuth();
-  const router = useRouter()
-
+  const {error, login, user} = useAuth();
+  const router = useRouter();
   const [type, setType] = React.useState<'password' | 'text'>('password');
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
+  const [savedEmail, setSavedEmail] = useState("");
+  const [savedPassword, setSavedPassword] = useState("");
 
-    let email = e.target.email.value;
-    let password = e.target.password.value;
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    control,
+    setValue
+  } = useForm<formData>();
 
-    const data = {
-      email, password
+  // Load saved email and password from cookie
+  useEffect(() => {
+    const email = getCookie("email");
+    const password = getCookie("password");
+    if (email) {
+      setSavedEmail(email);
+      setSavedPassword(password);
+
+      setValue("email", email);
+      setValue("password", password);
+      setValue("remember_me", true);
     }
-    //console.log(data);
-    //console.log("This is login"+ login);
+  }, [setValue]);
 
+  const onSubmit = async (data: formData) => {
 
     try {
-      const res = await login(data);
-      // if(dataInfo.success){
-        // console.log(dataInfo)
-      router.push("/dashboard");
-      // }
-    console.log(res)
-    } catch (error: any) {
-      //toast.error(error.message);
-      console.log("Error form login",error);
+      // console.log(user);
+      await login(data);
+     
+      router.push('/dashboard');
+      const {email, password, remember_me} = data;
+
+      //If remember me, value setting into cookie for show next time (30days)
+      if (remember_me) {
+        function setCookie(name: string, value: string, days: number) {
+          const expires = new Date();
+          expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+          const expiresString = `expires=${expires.toUTCString()}`;
+          document.cookie = `${name}=${value}; ${expiresString}; path=/`;
+        }
+        setCookie("email", email, 30);
+        setCookie("password", password, 30);
+      } else {
+        function deleteCookie(name: string) {
+          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+        }
+        deleteCookie("email");
+        deleteCookie("password");
+      }
+     
+    } catch (errorData: any) {
+      console.log("Down"+ errorData);
     }
 
   }
-
   return (
      <div className="grid lg:grid-cols-2 gap-16 items-center min-h-screen">
         <div className="text-white py-10 max-w-[500px] lg:max-w-full mx-auto lg:mx-0">
@@ -63,16 +109,21 @@ export default function SignIn() {
             </div>
 
             {/* Login Form */}
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+
                 <div className="mb-4">
                     <Label className="font-base font-medium mb-3">Email</Label>
-                    <Input name="email" className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#4A4C56] rounded-[8px] outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter Email Address"/>
+                    <Input defaultValue={savedEmail} {...register("email", { required: "Email is required",   pattern: {value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Please enter a valid email address"}})} className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#4A4C56] rounded-[8px] outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter Email Address"/>
+
+                    {errors.email && (
+                      <p className="error-msg">{errors.email.message}</p>
+                    )}
                 </div>
 
                 <div className="mb-4">
                     <Label className="font-base font-medium mb-3">Password</Label>
                     <div className="relative">
-                      <Input type={type} name="password" className="h-[40px] w-full px-4 pr-10 py-3 text-sm font-normal border border-[#4A4C56] rounded-[8px] outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter your password"/>
+                      <Input defaultValue={savedPassword} type={type} {...register("password", { required: "Password is required",  'minLength': {value: 8, 'message': "Password should be at least 8 characters"}})} className="h-[40px] w-full px-4 pr-10 py-3 text-sm font-normal border border-[#4A4C56] rounded-[8px] outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter your password"/>
                      
                       <button
                         type="button"
@@ -85,18 +136,39 @@ export default function SignIn() {
                         }
                       </button>
                     </div>
+
+                    {errors.password && (
+                      <p className="error-msg">{errors.password.message}</p>
+                    )}
                 </div>
 
                 <div className="flex items-center justify-between mb-12">
                     <div>
                         <div className="flex items-center gap-3">
                             <Label htmlFor="terms" className="cursor-pointer">
-                                <input type="checkbox" id="terms" className="cursor-pointer h-4 w-4 accent-primary-color"/>
+
+                                <Controller
+                                  name="remember_me"
+                                  control={control}
+                                  defaultValue={false}
+                                  render={({ field }) => (
+                                  <input type="checkbox"  
+                                  checked={field.value}
+                                  onChange={field.onChange} id="terms" className="cursor-pointer h-4 w-4 accent-primary-color"/>
+                                  )}
+                                />
+
                                 <span className="text-sm font-[300]">Remember Me</span>
                             </Label>
                         </div>
                     </div>
                     <Link href="/auth/forgot-password" className="text-sm font-[300] underline">Forgot Password?</Link>
+                </div>
+
+                <div className="mb-2">
+                  {
+                    error && <p className="error-msg text-center">{error}</p>
+                  }
                 </div>
 
                 <button type="submit" className="h-11 w-full rounded bg-primary-color font-base font-medium cursor-pointer">Log In</button>
