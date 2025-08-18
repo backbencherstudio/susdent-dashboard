@@ -8,17 +8,19 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
   const router = useRouter();
 
-  // console.log("From private",user);
+
+
+  console.log("From private",user, isLoading);
 
   useEffect(() => {
     if (isLoading) return; // Wait for auth check to finish
 
     if (!user) {
       console.log("User not found");
-      router.replace("/auth/login");
+      router.replace("/auth/sign-in");
     } else if (user?.type !== "admin") {
       console.log("role not matched");
-      router.replace("/auth/login"); // Or another fallback route
+      router.replace("/auth/sign-in"); // Or another fallback route
     }
   }, [user, isLoading, router]);
 

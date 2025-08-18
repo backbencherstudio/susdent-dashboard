@@ -42,25 +42,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
  
   //   check user authencation on mount
  
-  useEffect(() => {
-    const checkUser = async () => {
-      setIsLoading(true); // Start loading
-      const token = localStorage.getItem("authToken");
-      if (token) {
-        try {
-          const { data } = await privateAxios.get("/auth/me");
-          setUser(data?.data);
-        } catch (error) {
-          localStorage.removeItem("authToken");
-          setUser(null);
-          console.log("Auth error", error);
-        }
-      }
-      setIsLoading(false); // End loading (always runs)
-    };
+  // useEffect(() => {
+  //   const checkUser = async () => {
+  //     setIsLoading(true); // Start loading
+  //     const token = localStorage.getItem("authToken");
+  //     if (token) {
+  //       try {
+  //         const { data } = await privateAxios.get("/auth/me");
+  //         setUser(data?.data);
+  //       } catch (error) {
+  //         localStorage.removeItem("authToken");
+  //         setUser(null);
+  //         console.log("Auth error", error);
+  //       }
+  //     }
+  //     setIsLoading(false); // End loading (always runs)
+  //   };
  
-    checkUser();
-  }, []);
+  //   checkUser();
+  // }, []);
  
   // Login method
   const login = async (credentials: { email: string; password: string }) => {
@@ -69,9 +69,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const response = await publicAxios.post("/users/login", credentials);
  
-      console.log(response);
-    //   const { authorization } = response.data;
-    //   localStorage.setItem("authToken", authorization.token);
+      // console.log(response);
+      // const curUser = response?.data?.token;
+      localStorage.setItem("authToken", response?.data?.token);
+      setUser(response?.data?.user)
+      setIsLoading(false)
+      // console.log(curUser)
 
   
       //return response.data;
@@ -82,6 +85,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
       // console.log("From context after login", data); data
     } catch (error: any) {
+
+      console.log(error)
       setError(
         "Error from login: " +
           (error?.response?.data?.message || "Unknown error")
@@ -90,7 +95,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
     }
   };
- 
+       
   const logout = async () => {
     setIsLoading(true);
     try {

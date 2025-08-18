@@ -8,11 +8,14 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/provider/AuthProvider";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+
 import React from "react";
 
 export default function SignIn() {
 
   const {login} = useAuth();
+  const router = useRouter()
 
   const [type, setType] = React.useState<'password' | 'text'>('password');
 
@@ -32,12 +35,13 @@ export default function SignIn() {
     try {
       const res = await login(data);
       // if(dataInfo.success){
-      //   console.log(dataInfo)
-      //router.push("/dashboard/overview");
+        // console.log(dataInfo)
+      router.push("/dashboard");
       // }
+    console.log(res)
     } catch (error: any) {
       //toast.error(error.message);
-      console.log(error);
+      console.log("Error form login",error);
     }
 
   }
