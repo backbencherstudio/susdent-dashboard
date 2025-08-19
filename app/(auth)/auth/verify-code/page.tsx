@@ -1,58 +1,69 @@
 "use client";
-import { useState, useRef } from "react";
-
-import { Input } from "@/components/ui/input";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { useForm, Controller} from "react-hook-form"
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+import { publicAxios } from "@/components/axiosInstance/axios";
+import { useRouter } from "next/navigation";
+
+
+interface FormData {
+    otp: string
+}
 
 export default function VerifyCode() {
 
-    const [otp, setOtp] = useState(["", "", "", ""]);
-    const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
+    const router = useRouter();
 
-    // Handle change and move to the next input field
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const value = e.target.value;
+    const [formError, setFormError] = useState("");
 
-    if (value.length === 1) {
-        // Update OTP state
-        const updatedOtp = [...otp];
-        updatedOtp[index] = value;
-        setOtp(updatedOtp);
+    // otp sent email
+    const otpEmail = localStorage.getItem("otp-email");
 
-        // Move focus to the next input field
-        if (index < 3) {
-        inputsRef.current[index + 1]?.focus();
+    // submit
+    const {
+        formState: { errors },
+        handleSubmit,
+        control,
+        setValue
+    } = useForm<FormData>();
+
+    useEffect(() => {
+        if (errors.otp?.message) {
+        setFormError(""); 
         }
-    }
-    };
+    }, [errors.otp?.message]);
 
-    // Handle backspace and move to the previous input field
-    const handleBackspace = (e: React.KeyboardEvent<HTMLInputElement>, index: number) => {
-    if (e.key === "Backspace" && otp[index] === "") {
-        // Move focus to the previous input field when backspace is pressed
-        if (index > 0) {
-        inputsRef.current[index - 1]?.focus();
+    const onSubmit = async (data: FormData) => {
+
+      const email = otpEmail;
+      const updateData = {...data, email};
+
+      try {
+        const response = await publicAxios.post("/users/checkForgetPassOtp", updateData);
+        if(response.data)
+        {
+          localStorage.removeItem("otp-email");
+          localStorage.setItem("verified_otp", "true");
+          localStorage.setItem("otp_token", response.data.token);
+          router.push('/auth/set-password');
         }
-    }
-    };
-
-    // Handle delete behavior when input is filled
-    const handleDelete = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
-    const value = e.target.value;
-
-    if (value === "") {
-        // When the value is deleted, update OTP state and focus management
-        const updatedOtp = [...otp];
-        updatedOtp[index] = "";
-        setOtp(updatedOtp);
-
-        // Move focus to the previous input if deleting
-        if (index > 0) {
-        inputsRef.current[index - 1]?.focus();
+      } catch (error: any) {
+        if (error.response) 
+        {
+          const errResponse = error.response.data;
+          setFormError(errResponse.message);
+        } else {
+          setFormError('Network error: Failed to reach server');
         }
+      } 
+
     }
-    };
 
 
   return (
@@ -67,30 +78,64 @@ export default function VerifyCode() {
 
             <div className="mt-4 mb-12">
                 <h1 className="text-[28px] font-medium">Check Your Email</h1>
-                <p className="text-base font-normal">We sent a verification link to olivia@untitledui.com</p>
+                <p className="text-base font-normal">We sent a verification link to <span className="break-all">{otpEmail ? otpEmail : ""}</span></p>
             </div>
 
             {/* Form */}
-            <form>
-                <div className="mb-12 grid grid-cols-4 gap-4">
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <div className="mb-12">
 
-                    {otp.map((value, index) => (
-                    <Input
-                        key={index}
-                        maxLength={1}
-                        value={value}
-                        onChange={(e) => handleChange(e, index)}
-                        onKeyDown={(e) => handleBackspace(e, index)}
-                        onInput={(e: any) => handleDelete(e, index)} 
-                        ref={(el: any) => (inputsRef.current[index] = el)}
-                        className="w-full h-[60px] lg:h-[80px] text-center text-xl md:text-xl xl:text-2xl font-normal border border-[#4A4C56] rounded-[10px] outline-none focus-visible:ring-0 focus-visible:border-primary-color"
-                        placeholder={String(index + 1)}
-                    />
-                    ))}
+                   <div className="flex justify-center otp-input-wrap">
+                        <Controller
+                            name="otp"
+                            control={control}
+                            rules={{
+                            required: "OTP is required",
+                            minLength: {
+                                value: 4,
+                                message: "OTP must be 4 digits",
+                            },
+                            maxLength: {
+                                value: 4,
+                                message: "OTP must be 4 digits",
+                            },
+                            pattern: {
+                                value: /^\d{4}$/,
+                                message: "OTP must contain only numbers",
+                            },
+                            }}
+                            render={({ field }) => (
+                            <InputOTP
+                                maxLength={4}
+                                value={field.value}
+                                onChange={(value) => {
+                                field.onChange(value);
+                                setValue("otp", value);
+                                }}
+                            >
+                                <InputOTPGroup>
+                                {[...Array(4)].map((_, idx) => (
+                                    <InputOTPSlot
+                                    key={idx}
+                                    index={idx}
+                                    className="w-full h-[60px] lg:h-[80px] text-center text-xl md:text-xl xl:text-2xl border border-[#4A4C56] rounded-[10px] outline-none focus-visible:ring-0 focus-visible:border-primary-color"
+                                    />
+                                ))}
+                                </InputOTPGroup>
+                            </InputOTP>
+                            )}
+                        />
+                    </div> 
+
+                   {errors.otp?.message ? (
+                       <p className="error-msg">{String(errors.otp.message)}</p>
+                    ) : (
+                    formError && <p className="error-msg">{formError}</p>
+                    )}
                 </div>
-                <Link href='/auth/set-password'>
-                  <button type="submit" className="h-11 w-full rounded bg-primary-color font-base font-medium cursor-pointer">Verify Email</button>
-                </Link>
+
+
+                <button type="submit" className="h-11 w-full rounded bg-primary-color font-base font-medium cursor-pointer">Verify Email</button>
             </form>
         
 

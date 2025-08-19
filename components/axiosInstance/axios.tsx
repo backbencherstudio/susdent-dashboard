@@ -5,7 +5,7 @@ import axios from 'axios';
 export const publicAxios = axios.create({
   baseURL: "https://decisions-spanish-protecting-anime.trycloudflare.com/api",
   headers: {
-    'Content-Type': 'application/json',
+    // 'Content-Type': 'application/json',
   },
 });
 
@@ -14,7 +14,7 @@ export const publicAxios = axios.create({
 export const privateAxios = axios.create({
   baseURL: "https://decisions-spanish-protecting-anime.trycloudflare.com/api",
   headers: {
-    'Content-Type': 'application/json',
+    // 'Content-Type': 'application/json',
   },
 });
 

@@ -30,8 +30,7 @@ function getCookie(name: string): string {
 }
 
 export default function SignIn() {
-
-  const {error, login, user} = useAuth();
+  const {error, login} = useAuth();
   const router = useRouter();
   const [type, setType] = React.useState<'password' | 'text'>('password');
 
@@ -45,6 +44,8 @@ export default function SignIn() {
     control,
     setValue
   } = useForm<formData>();
+
+
 
   // Load saved email and password from cookie
   useEffect(() => {
@@ -61,34 +62,33 @@ export default function SignIn() {
   }, [setValue]);
 
   const onSubmit = async (data: formData) => {
-
     try {
-      // console.log(user);
-      await login(data);
-     
-      router.push('/dashboard');
-      const {email, password, remember_me} = data;
+      const response = await login(data);
+      if(response !== undefined)
+      {
+        router.push('/dashboard');
+        const {email, password, remember_me} = data;
 
-      //If remember me, value setting into cookie for show next time (30days)
-      if (remember_me) {
-        function setCookie(name: string, value: string, days: number) {
-          const expires = new Date();
-          expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-          const expiresString = `expires=${expires.toUTCString()}`;
-          document.cookie = `${name}=${value}; ${expiresString}; path=/`;
+        //If remember me, value setting into cookie for show next time (30days)
+        if (remember_me) {
+          function setCookie(name: string, value: string, days: number) {
+            const expires = new Date();
+            expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
+            const expiresString = `expires=${expires.toUTCString()}`;
+            document.cookie = `${name}=${value}; ${expiresString}; path=/`;
+          }
+          setCookie("email", email, 30);
+          setCookie("password", password, 30);
+        } else {
+          function deleteCookie(name: string) {
+            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+          }
+          deleteCookie("email");
+          deleteCookie("password");
         }
-        setCookie("email", email, 30);
-        setCookie("password", password, 30);
-      } else {
-        function deleteCookie(name: string) {
-          document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
-        }
-        deleteCookie("email");
-        deleteCookie("password");
       }
-     
     } catch (errorData: any) {
-      console.log("Down"+ errorData);
+      console.log(errorData);
     }
 
   }
@@ -165,7 +165,7 @@ export default function SignIn() {
                     <Link href="/auth/forgot-password" className="text-sm font-[300] underline">Forgot Password?</Link>
                 </div>
 
-                <div className="mb-2">
+                <div className="mb-6">
                   {
                     error && <p className="error-msg text-center">{error}</p>
                   }
