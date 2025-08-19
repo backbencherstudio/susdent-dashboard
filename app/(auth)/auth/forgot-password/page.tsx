@@ -1,9 +1,12 @@
 "use client";
 
+import { publicAxios } from "@/components/axiosInstance/axios";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form"
 
 interface formData {
@@ -11,15 +14,41 @@ interface formData {
 }
 
 export default function ForgotPassword() {
+
+  const [formError, setFormError] = useState("");
+  const router = useRouter();
+
   const {
     register,
     formState: { errors },
     handleSubmit,
   } = useForm<formData>();
 
-  const onSubmit = async (data: formData) => {
-    console.log(data);
+  useEffect(() => {
+      if (errors.email?.message) {
+      setFormError(""); 
+      }
+  }, [errors.email?.message]);
+
+ const onSubmit = async (data: formData) => {
+  localStorage.setItem("otp-email", data.email);
+
+  try {
+    const response = await publicAxios.post("/users/forget_pass", data);
+    if(response.data)
+    {
+      router.push('/auth/verify-code');
+    }
+  } catch (error: any) {
+    if (error.response) 
+    {
+      const errResponse = error.response.data;
+      setFormError(errResponse.message);
+    } else {
+      setFormError('Network error: Failed to reach server');
+    }
   }
+}
     
   return (
     <div className="grid lg:grid-cols-2 gap-16 items-center min-h-screen">
@@ -42,8 +71,10 @@ export default function ForgotPassword() {
                     <Label className="font-base font-medium mb-3">Email</Label>
                     <Input {...register("email", { required: "Email is required",   pattern: {value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Please enter a valid email address"}})} className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#4A4C56] rounded-[8px] outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter Email Address"/>
 
-                    {errors.email && (
-                      <p className="error-msg">{errors.email.message}</p>
+                    {errors.email?.message ? (
+                       <p className="error-msg">{String(errors.email.message)}</p>
+                    ) : (
+                    formError && <p className="error-msg">{formError}</p>
                     )}
                 </div>
 

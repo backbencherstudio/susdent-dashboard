@@ -76,7 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
  
-  //   auth info
+  // auth info
   const authInfo: AuthContextType = {
     user,
     isLoading,

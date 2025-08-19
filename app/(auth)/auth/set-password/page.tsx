@@ -1,5 +1,5 @@
 "use client";
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import EyeIcon from "@/components/icons/EyeIcon";
 import EyeSlash from "@/components/icons/EyeSlash";
 import { Input } from "@/components/ui/input";
@@ -7,11 +7,78 @@ import Image from "next/image";
 import Link from "next/link";
 import GreenCheck from '@/components/icons/GreenCheck';
 import RedCross from '@/components/icons/RedCross';
+import { useRouter } from 'next/navigation';
+import { useForm} from "react-hook-form"
+import { publicAxios } from '@/components/axiosInstance/axios';
+
+
+interface FormData {
+  password: string,
+  confirm_password: string
+}
+
 
 export default function SetPassword() {
-    
-   const [type, setType] = React.useState<'password' | 'text'>('password');
-   const [type2, setType2] = React.useState<'password' | 'text'>('password');
+
+  const router = useRouter();
+  const [type, setType] = React.useState<'password' | 'text'>('password');
+  const [type2, setType2] = React.useState<'password' | 'text'>('password');
+  const [formError, setFormError] = useState<string | React.ReactNode>("");;
+
+  // checked came from otp verified page or not
+  useEffect(()=>{
+    const verified_otp = localStorage.getItem("verified_otp");
+    if(!verified_otp)
+    {
+      router.push("/auth/verify-code");
+    }
+  },[router])
+
+   
+  // submit
+  const {
+      register,
+      formState: { errors },
+      handleSubmit,
+      watch
+  } = useForm<FormData>();
+
+
+  const onSubmit = async (data: FormData) => {
+
+    const newPassword = data.password;
+    const updateData = {newPassword}
+    const otp_token = localStorage.getItem("otp_token");
+
+
+    try {
+      const response = await publicAxios.post("/users/resetPass", updateData,{
+        headers:{
+          Authorization: `Bearer ${otp_token}`
+        }
+      });
+      if(response.data)
+      {
+        localStorage.removeItem("verified_otp");
+        localStorage.removeItem("otp_token");
+        router.push('/auth/reset-successful');
+      }
+    } catch (error: any) {
+      if (error.response) 
+      {
+        const errResponse = error.response.data;
+        setFormError(<span>
+          {errResponse.message} 
+          {" "}.Try again by clicking{" "}
+          <Link href='/auth/forgot-password' className='underline text-blue-500'>Forgot password</Link>
+        </span>);
+      } else {
+        setFormError('Network error: Failed to reach server');
+      }
+    } 
+
+  }
+
 
   return (
       <div className="grid lg:grid-cols-2 gap-16 items-center min-h-screen">
@@ -22,7 +89,6 @@ export default function SetPassword() {
             </Link>
 
             <div className="h-10 lg:h-20"></div>
-           {/*  <p className="text-sm font-normal">Hey! Welcome</p> */}
 
             <div className="mt-4 mb-12">
                 <h1 className="text-[28px] font-medium">Set new password</h1>
@@ -30,12 +96,11 @@ export default function SetPassword() {
             </div>
 
             {/* Login Form */}
-            <form>
+            <form onSubmit={handleSubmit(onSubmit)}>
 
                 <div className="mb-4">
-
                     <div className="relative">
-                      <Input type={type} className="h-[40px] w-full px-4 pr-10 py-3 text-sm font-normal border border-[#4A4C56] rounded-[8px] outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="New password"/>
+                      <Input type={type} {...register("password", { required: "Password is required",  'minLength': {value: 8, 'message': "Password should be at least 8 characters"}})} className="h-[40px] w-full px-4 pr-10 py-3 text-sm font-normal border border-[#4A4C56] rounded-[8px] outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="New password"/>
                      
                       <button
                         type="button"
@@ -47,7 +112,14 @@ export default function SetPassword() {
                             <EyeIcon className="h-5 w-5" /> :  <EyeSlash className="h-5 w-5"/>
                         }
                       </button>
+
                     </div>
+
+                    
+                      {errors.password && (
+                        <p className="error-msg">{errors.password.message}</p>
+                      )}
+
 
                     <div className='grid sm:grid-cols-2 gap-3 my-6'>
                         <div className='flex items-center gap-2 text-xs font-normal'>
@@ -72,7 +144,18 @@ export default function SetPassword() {
 
                 <div className="mb-12">
                     <div className="relative">
-                      <Input type={type2} className="h-[40px] w-full px-4 pr-10 py-3 text-sm font-normal border border-[#4A4C56] rounded-[8px] outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Confirm password"/>
+                      <Input  {...register("confirm_password", {
+                          required: "Password is required",
+                          minLength: {
+                            value: 8,
+                            message: "Password must be at least 8 characters long",
+                          },
+                          validate: (value) => {
+                            if (value !== watch("password")) {
+                              return "Passwords do not match";
+                            }
+                          },
+                        })} type={type2} className="h-[40px] w-full px-4 pr-10 py-3 text-sm font-normal border border-[#4A4C56] rounded-[8px] outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Confirm password"/>
                      
                       <button
                         type="button"
@@ -85,11 +168,21 @@ export default function SetPassword() {
                         }
                       </button>
                     </div>
+
+                     {errors.confirm_password && (
+                        <p className="error-msg">
+                          {errors.confirm_password.message as string}
+                        </p>
+                      )}
                 </div>
 
-                <Link href='/auth/reset-successful'>
-                  <button type="submit" className="h-11 w-full rounded bg-primary-color font-base font-medium cursor-pointer">Reset Password</button>
-                </Link>
+                <div className="mb-6">
+                  {
+                    formError && <p className="error-msg text-center">{formError}</p>
+                  }
+                </div>
+
+                <button type="submit" className="h-11 w-full rounded bg-primary-color font-base font-medium cursor-pointer">Reset Password</button>
             </form>
 
         </div>
