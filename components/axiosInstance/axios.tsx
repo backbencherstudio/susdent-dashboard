@@ -3,18 +3,18 @@ import axios from 'axios';
 
 // Public Axios instance (no auth)
 export const publicAxios = axios.create({
-  baseURL: "https://notre-batteries-responses-proposals.trycloudflare.com/api",
+  baseURL: "https://decisions-spanish-protecting-anime.trycloudflare.com/api",
   headers: {
-    'Content-Type': 'application/json',
+    // 'Content-Type': 'application/json',
   },
 });
 
 
 // Private Axios instance (with auth)
 export const privateAxios = axios.create({
-  baseURL: "https://notre-batteries-responses-proposals.trycloudflare.com/api",
+  baseURL: "https://decisions-spanish-protecting-anime.trycloudflare.com/api",
   headers: {
-    'Content-Type': 'application/json',
+    // 'Content-Type': 'application/json',
   },
 });
 

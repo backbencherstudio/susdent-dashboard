@@ -45,6 +45,8 @@ export default function SignIn() {
     setValue
   } = useForm<formData>();
 
+
+
   // Load saved email and password from cookie
   useEffect(() => {
     const email = getCookie("email");
@@ -163,7 +165,7 @@ export default function SignIn() {
                     <Link href="/auth/forgot-password" className="text-sm font-[300] underline">Forgot Password?</Link>
                 </div>
 
-                <div className="mb-2">
+                <div className="mb-6">
                   {
                     error && <p className="error-msg text-center">{error}</p>
                   }

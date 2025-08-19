@@ -22,7 +22,7 @@ export default function ResetSuccessfull() {
             </div>
          
 
-            <Link href='/dashboard'>
+            <Link href='/auth'>
               <button type="submit" className="h-11 w-full rounded bg-primary-color font-base font-medium cursor-pointer">Continue</button>
             </Link>
 

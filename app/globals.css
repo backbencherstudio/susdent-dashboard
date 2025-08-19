@@ -204,3 +204,15 @@ body {
 .error-msg {
   @apply text-[#e70d0d] text-sm my-1;
 }
+
+/* OTP era */
+.otp-input-wrap > div,
+.otp-input-wrap > div > div {
+  width: 100% !important;
+  justify-content: center !important;
+  gap: 16px !important;
+}
+
+.otp-input-wrap > div > div > input {
+  width: 100% !important;
+}
