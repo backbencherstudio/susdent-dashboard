@@ -39,6 +39,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<string | null>(null);
  
   // console.log("Inside auth context", user);
+    useEffect(() => {
+    const checkUser = async () => {
+      setIsLoading(true); // Start loading
+      const token = localStorage.getItem("authToken");
+
+      if (token) {
+        try {
+          const { data } = await privateAxios.get("/users/get-me");
+          console.log(data)
+          setUser(data?.data);
+        } catch (error) {
+          // localStorage.removeItem("authToken");
+          setUser(null);
+          console.log("Auth error", error);
+        }
+      }
+      setIsLoading(false); // End loading (always runs)
+    };
+
+    checkUser();
+  }, []);
+
  
   // Login method
   const login = async (credentials: { email: string; password: string }) => {

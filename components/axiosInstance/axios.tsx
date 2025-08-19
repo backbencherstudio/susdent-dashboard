@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Public Axios instance (no auth)
 export const publicAxios = axios.create({
-  baseURL: "https://notre-batteries-responses-proposals.trycloudflare.com/api",
+  baseURL: "https://decisions-spanish-protecting-anime.trycloudflare.com/api",
   headers: {
     'Content-Type': 'application/json',
   },
@@ -12,7 +12,7 @@ export const publicAxios = axios.create({
 
 // Private Axios instance (with auth)
 export const privateAxios = axios.create({
-  baseURL: "https://notre-batteries-responses-proposals.trycloudflare.com/api",
+  baseURL: "https://decisions-spanish-protecting-anime.trycloudflare.com/api",
   headers: {
     'Content-Type': 'application/json',
   },
@@ -22,6 +22,7 @@ export const privateAxios = axios.create({
 privateAxios.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('authToken');
+    // console.log(token)
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -37,7 +38,7 @@ privateAxios.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('authToken');
+      // localStorage.removeItem('authToken');
       window.location.href = '/auth/login';
     }
     return Promise.reject(error);

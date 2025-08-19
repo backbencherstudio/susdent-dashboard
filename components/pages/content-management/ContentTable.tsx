@@ -13,6 +13,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { privateAxios } from "@/components/axiosInstance/axios";
+import { useQuery } from "@tanstack/react-query";
+import DeleteContent from "./DeleteContent";
 
 interface VideoDetail {
   id: number;
@@ -114,7 +117,28 @@ const videoDetailsList: VideoDetail[] = [
   },
 ];
 
-const columns: ColumnDef<VideoDetail>[] = [
+interface Category {
+  id: string;
+  name: string;
+}
+
+interface Content {
+  id: string;
+  title: string;
+  genre: string;
+  category: Category;
+  type: string;
+  file_size_bytes: string;
+  status: string;
+  category_id: string;
+  content_status: string;
+  created_at: string;
+  view_count: number;
+  video: string;
+  thumbnail: string;
+}
+
+const columns: ColumnDef<Content>[] = [
   {
     accessorKey: "thumbnail",
     header: "Thumbnail",
@@ -139,79 +163,80 @@ const columns: ColumnDef<VideoDetail>[] = [
   {
     accessorKey: "category",
     header: "Category",
-    cell: ({ row }) => <span className="">{row.original.category}</span>,
+    cell: ({ row }) => <span className="">{row.original.category.name}</span>,
   },
   {
     accessorKey: "type",
     header: "Type",
     cell: ({ row }) => <span className="">{row.original.type}</span>,
   },
-  {
-    accessorKey: "duration",
-    header: "Duration",
-    cell: ({ row }) => <span className="">{row.original.duration}</span>,
-  },
+
   {
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => <span className="">{row.original.status}</span>,
   },
-  {
-    accessorKey: "uploaded",
-    header: "Uploaded",
-    cell: ({ row }) => <span className="">{row.original.uploaded}</span>,
-  },
+
   {
     accessorKey: "views",
     header: "Views",
-    cell: ({ row }) => <span className="">{row.original.views}</span>,
+    cell: ({ row }) => <span className="">{row.original.view_count}</span>,
   },
   {
     id: "actions",
     header: "Actions",
     cell: ({ row }) => (
       <div className="flex gap-4">
+        <DeleteContent categoryId={row.original.id} />
         <button>
           <EditIcon />
-        </button>
-        <button>
-          <DeleteIcon />
         </button>
       </div>
     ),
   },
 ];
 
+// fetch content
+const fetchContent = async () => {
+  const res = await privateAxios.get("/contents/allContents");
+  return res.data;
+};
+
 export default function ContentTable() {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["contents"],
+    queryFn: fetchContent,
+  });
+
+  console.log(data);
+
   const [page, setPage] = useState(1);
   const pageSize = 5;
-  const total = videoDetailsList.length;
-  const paginatedData = videoDetailsList.slice(
-    (page - 1) * pageSize,
-    page * pageSize
-  );
+
+  const total = data?.length;
+  const paginatedData = data?.slice((page - 1) * pageSize, page * pageSize);
+
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>error</p>;
+
   return (
     <>
       {/* filter */}
       <div className="mb-4 flex gap-4">
         <Select>
-          <SelectTrigger className="flex items-center gap-2 rounded border border-[color:var(--Gray-Black-50,#E9E9EA)] [background:#0D121E] px-5 py-2.5 border-solid ">
+          <SelectTrigger className="flex items-center gap-2 rounded border border-[color:var(--Gray-Black-50,#E9E9EA)] [background:#0D121E] px-8 py-2.5 border-solid ">
             <SelectValue
               className="text-white [font-family:Inter] text-sm font-normal leading-[100%]"
               placeholder="Genre"
             />
           </SelectTrigger>
-          <SelectContent className="border border-[color:var(--Line-Color,#1B202C)] [background:#0D121E] p-3 border-solid text-white [font-family:Inter] text-sm font-normal leading-[100%]">
-            <SelectGroup className="space-y-2">
-              {/* <SelectLabel>Fruits</SelectLabel> */}
+          <SelectContent className="border border-[color:var(--Line-Color,#1B202C)] bg-red-500 rounded  min-w-24 max-w-24">
+            <SelectGroup className="space-y-2 w-24">
               <SelectItem className="selectOption" value="action">
                 Action
               </SelectItem>
               <SelectItem className="selectOption" value="comedy">
                 Comedy
-              </SelectItem>
-              <SelectItem className="selectOption" value="drama">
-                Drama
               </SelectItem>
             </SelectGroup>
           </SelectContent>
@@ -219,17 +244,36 @@ export default function ContentTable() {
 
         {/* 2nd */}
         <Select>
-          <SelectTrigger className="rounded">
-            <SelectValue placeholder="Select a fruit" />
+          <SelectTrigger className="rounded px-5">
+            <SelectValue placeholder="Category" />
           </SelectTrigger>
           <SelectContent className="border border-[color:var(--Line-Color,#1B202C)] [background:#0D121E] rounded">
-            <SelectGroup>
-              <SelectLabel>Fruits</SelectLabel>
-              <SelectItem  className="selectOption" value="apple">Apple</SelectItem>
-              <SelectItem value="banana">Banana</SelectItem>
-              <SelectItem value="blueberry">Blueberry</SelectItem>
-              <SelectItem value="grapes">Grapes</SelectItem>
-              <SelectItem value="pineapple">Pineapple</SelectItem>
+            <SelectGroup className="space-y-2">
+              <SelectItem className="selectOption" value="action">
+                Action
+              </SelectItem>
+              <SelectItem className="selectOption" value="comedy">
+                Comedy
+              </SelectItem>
+            </SelectGroup>
+          </SelectContent>
+        </Select>
+        {/* 2nd */}
+        <Select>
+          <SelectTrigger className="rounded px-[30px] text-center">
+            <SelectValue className="text-center" placeholder="Status" />
+          </SelectTrigger>
+          <SelectContent className="border border-[color:var(--Line-Color,#1B202C)] [background:#0D121E] rounded">
+            <SelectGroup className="space-y-2">
+              <SelectItem className="selectOption" value="published">
+                Published
+              </SelectItem>
+              <SelectItem className="selectOption" value="live">
+                Live
+              </SelectItem>
+              <SelectItem className="selectOption" value="draft">
+                Draft
+              </SelectItem>
             </SelectGroup>
           </SelectContent>
         </Select>
