@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from 'next/image'
 import React from 'react'
 import { Label } from "@/components/ui/label";
@@ -14,9 +14,32 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import Tabs from "@/components/pages/setting/Tabs";
+import { useAuth } from "@/provider/AuthProvider";
+
+import { useForm} from "react-hook-form"
+import { privateAxios } from "@/components/axiosInstance/axios";
+import { toast } from "sonner";
+
+interface CityData {
+  label: string,
+  value: string
+}
+interface FormData{
+  name: string,
+  email: string,
+  date_of_birth: string,
+  address: string,
+  phone_number: string,
+  city: string | null,
+  postal_code: string,
+  bio: string
+}
 
 export default function Setting() {
 
+  const {user} = useAuth();
+
+  const [image, setImage] = useState<File | undefined>();
   // Image Preview Show
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
@@ -25,22 +48,118 @@ export default function Setting() {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      
       // Read the file as a data URL (base64 string)
       reader.onloadend = () => {
         setImagePreview(reader.result as string);  // Update image preview state
       };
-
       if (file) {
         reader.readAsDataURL(file);  // Convert the file to a data URL
       }
+
+      setImage(file);
     }
   };
 
+  // Update Image
+  useEffect(() => {
+    const updateImage = async () => {
+      const data = {
+        profilePicture: image
+      };
+
+      try {
+        const response = await privateAxios.put("/users/update-image", data, {
+          headers:{
+            "Content-Type": "multipart/form-data"
+          }
+        }); 
+        if(response.data)
+        {
+          toast.success("Image updated successfully", {
+            position: "top-right",
+            style: {
+              backgroundColor: "#4CAF50", 
+              color: "#fff", 
+            },
+          });
+        }
+      } catch (errorData: any) {
+        toast.error("Image updated failed", {
+          position: "top-right",
+          style: {
+            backgroundColor: "#f44336",
+            color: "#fff",
+          },
+        });
+      }
+    };
+
+    if (image) {
+      updateImage();
+    }
+  }, [image]);
+
   // Handle delete action (reset the image preview)
-  const handleDelete = () => {
+ /*  const handleDelete = () => {
     setImagePreview(null);  // Reset the preview image
-  };
+    setImage(undefined);
+  }; */
+
+  // City
+  const citis: CityData[] = [
+    {
+      label: "Dhaka",
+      value: "Dhaka"
+    },
+    {
+      label: "Chittagong",
+      value: "Chittagong",
+    },
+    {
+      label: "Feni",
+      value: "Feni",
+    },
+  ]
+
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    setValue,
+  } = useForm<FormData>();
+
+  const onSubmit = async (data: FormData) => {
+    try {
+
+      const date_of_birth = new Date(data.date_of_birth).toISOString();
+      data.date_of_birth = date_of_birth;
+   
+      const response = await privateAxios.put("/users/update-user-details", data); 
+      if(response.data)
+      {
+        toast.success("Data updated successfully", {
+          position: "top-right",
+          style: {
+            backgroundColor: "#4CAF50", 
+            color: "#fff", 
+          },
+        });
+      }
+    } catch (errorData: any) {
+       toast.error("Data updated failed", {
+        position: "top-right",
+        style: {
+          backgroundColor: "#f44336",
+          color: "#fff",
+        },
+      });
+    }
+  }
+
+  // convert dob in normal
+  const formattedDate = user?.date_of_birth
+    ? new Date(user.date_of_birth).toLocaleDateString('en-CA')
+    : '';
 
   return (
     <>
@@ -49,106 +168,135 @@ export default function Setting() {
 
     {/* Image Upload */}
     <div className='flex flex-wrap items-center gap-2 sm:gap-5 '>
-       <div>
+      <div>
           <div className="h-[100px] w-[100px]">
           {imagePreview ? (
             <Image src={imagePreview} alt="Preview" className="h-full w-full object-cover rounded-full" width={100} height={100} />
           ) : (
-            <Image src="/images/user.svg" alt="Admin" className="h-[100px] w-[100px]" width={100} height={100} />
+            user?.imageUrl ? 
+              <Image src={user.imageUrl} alt="Admin" className="h-[100px] w-[100px]" width={100} height={100} /> :  
+              <Image src="/images/user.svg" alt="Admin" className="h-[100px] w-[100px]" width={100} height={100} />
           )}
         </div>
-       </div>
-       <label htmlFor="profileImage" className='cursor-pointer py-[14px] px-5 border border-white rounded-[100px]'>
-        <input type="file" className='hidden' name="image" id="profileImage" accept="image/*" onChange={handleImageChange}/>
+      </div>
+      <label htmlFor="profileImage" className='cursor-pointer py-[14px] px-5 border border-white rounded-[100px]'>
+        <input type="file" hidden id="profileImage" accept="image/*" onChange={handleImageChange}/>
         <span className='text-sm font-medium'>Upload New Picture</span>
-       </label>
-       <button className='text-sm font-medium px-5 py-[14px] rounded-[100px] bg-btn-secondary-bg cursor-pointer'>Delete</button>
+      </label>
+      {/* <button type="button" onClick={handleDelete} className='text-sm font-medium px-5 py-[14px] rounded-[100px] bg-btn-secondary-bg cursor-pointer'>Delete</button> */}
     </div>
 
-    {/* Personal Details Form */}
-    <div className='bg-secondary-bg p-4 rounded-[8px] mt-4'>
-        <div className="grid sm:grid-cols-2 gap-5">
-            {/* Name */}
-            <div className="mb-4">
-              <Label className="text-base font-mediumd mb-3">Name</Label>
-              <Input className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter name" />
-            </div>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      {/* Personal Details Form */}
+      <div className='bg-secondary-bg p-4 rounded-[8px] mt-4'>
+      
+          <div className="grid sm:grid-cols-2 gap-5">
+              {/* Name */}
+              <div className="mb-4">
+                <Label className="text-base font-mediumd mb-3">Name</Label>
+                <Input defaultValue={user?.name} {...register("name", { required: "Name is required"})} className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter name" />
 
-            {/* Email */}
-            <div>
-              <Label className="text-base font-mediumd mb-3">Email</Label>
-              <Input className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter email address" />
-            </div>
-
-            {/* Date of Birth */}
-            <div>
-              <Label className="text-base font-mediumd mb-3">Date of Birth</Label>
-              <div className="relative">
-                <Input type="date" className="block h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" id="datepicker" />
+                {errors.name && (
+                    <p className="error-msg">{errors.name.message}</p>
+                )}
               </div>
-            </div>
 
-            {/* Language */}
-            <div>
-              <Label className="text-base font-mediumd mb-3">Language</Label>
+              {/* Email */}
+              <div>
+                <Label className="text-base font-mediumd mb-3">Email</Label>
+                <Input defaultValue={user?.email} {...register("email", { required: "Email is required",   pattern: {value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Please enter a valid email address"}})} className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter email address" />
 
-              <Select>
-                <SelectTrigger className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent className="bg-secondary-bg text-white border border-slate-700 rounded">
-                  <SelectItem value="English" className="cursor-pointer">English</SelectItem>
-                  <SelectItem value="French" className="cursor-pointer">French</SelectItem>
-                  <SelectItem value="German" className="cursor-pointer">German</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+                {errors.email && (
+                    <p className="error-msg">{errors.email.message}</p>
+                )}
+              </div>
 
-            {/* Address */}
-            <div>
-              <Label className="text-base font-mediumd mb-3">Address</Label>
-              <Input className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter your address" />
-            </div>
+              {/* Date of Birth */}
+              <div>
+                <Label className="text-base font-mediumd mb-3">Date of Birth</Label>
+                <div className="relative">
+                  <Input {...register("date_of_birth")} type="date" defaultValue={formattedDate} className="block h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" id="datepicker" />
+                </div>
+              </div>
 
-            {/* Phone */}
-            <div>
-              <Label className="text-base font-mediumd mb-3">Phone</Label>
-              <Input className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter phone" />
-            </div>
+              {/* Language */}
+              {/* <div>
+                <Label className="text-base font-mediumd mb-3">Language</Label>
 
-            {/* City */}
-            <div>
-              <Label className="text-base font-mediumd mb-3">City</Label>
+                <Select
+                  value={user?.language} 
+                  onValueChange={(val) => setValue("language", val)} 
+                  {...register("language")}
+                >
+                  <SelectTrigger className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-secondary-bg text-white border border-slate-700 rounded">
+                    {
+                      languages.map((language, idx) => {
+                        return (
+                          <SelectItem key={idx} value={language.value} className="cursor-pointer">{language.label}</SelectItem>
+                        )
+                      })
+                    }
+                  </SelectContent>
+                </Select>
+              </div> */}
 
-              <Select>
-                <SelectTrigger className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color">
-                  <SelectValue placeholder="Select" />
-                </SelectTrigger>
-                <SelectContent className="bg-secondary-bg text-white border border-slate-700 rounded">
-                  <SelectItem value="Dhaka" className="cursor-pointer">Dhaka</SelectItem>
-                  <SelectItem value="Chittagong" className="cursor-pointer">Chittagong</SelectItem>
-                  <SelectItem value="Feni" className="cursor-pointer">Feni</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
+              {/* Address */}
+              {/* <div>
+                <Label className="text-base font-mediumd mb-3">Address</Label>
+                <Input {...register("address")} defaultValue={user?.address} className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter your address" />
+              </div> */}
 
-            {/* Postal Code */}
-            <div>
-              <Label className="text-base font-mediumd mb-3">Postal Code</Label>
-              <Input className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter postal code" />
-            </div>
-        </div> 
+              {/* Phone */}
+              <div>
+                <Label className="text-base font-mediumd mb-3">Phone</Label>
+                <Input {...register("phone_number")} defaultValue={user?.phone_number} className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter phone" />
+              </div>
 
-        {/* Bio */}
-        <div className="mt-4 mb-6">
-          <Label className="text-base font-mediumd mb-3">Bio</Label>
-          <Textarea className="h-[100px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter postal code"/>
-        </div>
+              {/* City */}
+              <div>
+                <Label className="text-base font-mediumd mb-3">City</Label>
 
-        <button className="bg-primary-color text-white px-5 py-[10px] rounded text-sm font-normal cursor-pointer">Save</button>
+                <Select
+                value={user?.city}
+                onValueChange={(val) => setValue("city", val)} 
+                {...register("city")}
+                >
+                  <SelectTrigger className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-secondary-bg text-white border border-slate-700 rounded">
+                     {
+                      citis.map((city, idx) => {
+                        return (
+                          <SelectItem key={idx} value={city.value} className="cursor-pointer">{city.label}</SelectItem>
+                        )
+                      })
+                    }
+                  </SelectContent>
+                </Select>
+              </div>
 
-    </div>
-    
+              {/* Postal Code */}
+              <div>
+                <Label className="text-base font-mediumd mb-3">Postal Code</Label>
+                <Input {...register("postal_code")} defaultValue={user?.postal_code} className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter postal code" />
+              </div>
+          </div> 
+
+          {/* Bio */}
+          <div className="mt-4 mb-6">
+            <Label className="text-base font-mediumd mb-3">Bio</Label>
+            <Textarea {...register("bio")} defaultValue={user?.bio} className="h-[100px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter postal code"/>
+          </div>
+
+          <button type="submit" className="bg-primary-color text-white px-5 py-[10px] rounded text-sm font-normal cursor-pointer">Save</button>
+
+      </div>
+    </form>
+
     </>
   )
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { publicAxios } from "@/components/axiosInstance/axios";
 import EyeIcon from "@/components/icons/EyeIcon";
 import EyeSlash from "@/components/icons/EyeSlash";
 import SocialBtn from "@/components/pages/auth/SocialBtn";
@@ -45,8 +46,6 @@ export default function SignIn() {
     setValue
   } = useForm<formData>();
 
-
-
   // Load saved email and password from cookie
   useEffect(() => {
     const email = getCookie("email");
@@ -91,6 +90,36 @@ export default function SignIn() {
       console.log(errorData);
     }
 
+  }
+
+  // Google Login
+  const handleGoogleLogin = async (type : React.ReactNode) => {
+   if(type == "Google")
+   {
+    const data = {
+      idToken: "sdlfkdshgsdlfkwoeihgdegsdgoiadjglkdhgdsoif"
+    }
+
+     try {
+       const res = await publicAxios.patch("/users/google-login", data);
+       console.log('Top'+ res);
+     } catch (error: any) {
+       if (error.response) 
+      {
+        const errResponse = error.response.data;
+        console.log("Bottom"+ errResponse);
+        /* setFormError(<span>
+          {errResponse.message} 
+          . Try again by clicking{" "}
+          <Link href='/auth/forgot-password' className='underline text-blue-500'>Forgot password</Link>
+        </span>); */
+      } else {
+        console.log('Network error');
+        //setFormError('Network error: Failed to reach server');
+      }
+     }
+
+   }
   }
   return (
      <div className="grid lg:grid-cols-2 gap-16 items-center min-h-screen">
@@ -183,9 +212,7 @@ export default function SignIn() {
 
             {/* Social Login */}
             <div className="flex flex-wrap items-center justify-center gap-4">
-              <SocialBtn image="/icons/google.png" label="Google" />
-              <SocialBtn image="/icons/apple.svg" label="Apple" />
-              <SocialBtn image="/icons/facebook.svg" label="Facebook" />
+              <SocialBtn handleGoogleLogin = {handleGoogleLogin} image="/icons/google.png" label="Google" />
             </div>
 
         </div>

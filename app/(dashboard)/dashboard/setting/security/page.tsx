@@ -338,13 +338,13 @@ export default function Setting() {
         </div>
 
         {/* Two Factor Authentication */}
-        <div className="py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[#1B202C]">
+     {/*    <div className="py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[#1B202C]">
             <div className="w-full sm:w-[60%]">
                 <h6 className="text-base font-medium text-white mb-4">Two Factor Authentication</h6>
                 <p className="text-sm font-normal text-[#A5A5AB]">Receive codes via SMS or email every time you login</p>
             </div>
             <button className="bg-primary-color text-white px-5 py-[10px] rounded text-sm font-normal cursor-pointer">Enable</button>
-        </div>
+        </div> */}
 
         {/* Google Authentication */}
         <div className="py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[#1B202C]">
@@ -369,7 +369,7 @@ export default function Setting() {
         </div>
 
         {/* Email verification */}
-        <div className="py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[#1B202C]">
+       {/*  <div className="py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[#1B202C]">
             <div className="w-full sm:w-[60%]">
                 <h6 className="text-base font-medium text-white mb-4">Email Verification</h6>
                 <p className="text-sm font-normal text-[#A5A5AB]">The email address associated with the account Verified Email : cameron.graham@example.com</p>
@@ -378,25 +378,25 @@ export default function Setting() {
                <button className="hover:bg-primary-color border border-primary-color text-white px-5 py-[10px] rounded text-sm font-normal cursor-pointer">Remove</button>
                {handleChangeEmail()}
             </div>
-        </div>
+        </div> */}
 
         {/* Device Management */}
-        <div className="py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[#1B202C]">
+       {/*  <div className="py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[#1B202C]">
             <div className="w-full sm:w-[60%]">
                 <h6 className="text-base font-medium text-white mb-4">Device Management</h6>
                 <p className="text-sm font-normal text-[#A5A5AB]">The devices associated with the account</p>
             </div>
             <button className="bg-primary-color text-white px-5 py-[10px] rounded text-sm font-normal cursor-pointer">Manage</button>
-        </div>
+        </div> */}
 
         {/* Account Activity */}
-        <div className="py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[#1B202C]">
+        {/* <div className="py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[#1B202C]">
             <div className="w-full sm:w-[60%]">
                 <h6 className="text-base font-medium text-white mb-4">Account Activity</h6>
                 <p className="text-sm font-normal text-[#A5A5AB]">The activities of the account</p>
             </div>
             {handleAccountActivity()}
-        </div>
+        </div> */}
 
         {/* Deactivate Account */}
         <div className="py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[#1B202C]">
@@ -408,13 +408,13 @@ export default function Setting() {
         </div>
 
         {/* Delete Account */}
-        <div className="py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[#1B202C]">
+        {/* <div className="py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[#1B202C]">
             <div className="w-full sm:w-[60%]">
                 <h6 className="text-base font-medium text-white mb-4">Delete Account</h6>
                 <p className="text-sm font-normal text-[#A5A5AB]">Your account will be permanently deleted</p>
             </div>
             <button className="bg-primary-color text-white px-5 py-[10px] rounded text-sm font-normal cursor-pointer">Delete</button>
-        </div>
+        </div> */}
     </div>
     
     </>

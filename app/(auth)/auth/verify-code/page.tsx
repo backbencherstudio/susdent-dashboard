@@ -112,15 +112,26 @@ export default function VerifyCode() {
                                 field.onChange(value);
                                 setValue("otp", value);
                                 }}
+                                  className="caret-white"
                             >
                                 <InputOTPGroup>
                                 {[...Array(4)].map((_, idx) => (
                                     <InputOTPSlot
                                     key={idx}
                                     index={idx}
-                                    className="w-full h-[60px] lg:h-[80px] text-center text-xl md:text-xl xl:text-2xl border border-[#4A4C56] rounded-[10px] outline-none focus-visible:ring-0 focus-visible:border-primary-color"
+                                    className="w-full h-[60px] lg:h-[80px]
+                                    text-center text-xl md:text-xl xl:text-2xl
+                                    border border-[#4A4C56] rounded-[10px]
+                                    outline-none 
+                                    data-[state=selected]:ring-0 data-[state=selected]:ring-transparent
+                                    data-[state=selected]:shadow-none data-[state=selected]:border-primary-color
+                                    !ring-0 !shadow-none "
                                     />
                                 ))}
+
+                                {/* w-full h-[60px] lg:h-[80px] text-center text-xl md:text-xl xl:text-2xl border border-[#4A4C56] rounded-[10px] outline-none focus-visible:ring-0 focus-visible:border-primary-color */}
+
+
                                 </InputOTPGroup>
                             </InputOTP>
                             )}

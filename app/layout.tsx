@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import AuthProvider from "@/provider/AuthProvider";
 import QueryClientWrapper from "@/components/QueryClientWrapper";
+import { Toaster } from "@/components/ui/sonner"
 
 const inter = Inter({
   variable: "--font-inter",
@@ -25,6 +26,7 @@ export default function RootLayout({
         <QueryClientWrapper>
           <AuthProvider>{children}</AuthProvider>
         </QueryClientWrapper>
+         <Toaster />
       </body>
     </html>
   );

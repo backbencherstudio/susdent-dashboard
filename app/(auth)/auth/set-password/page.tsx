@@ -11,12 +11,10 @@ import { useRouter } from 'next/navigation';
 import { useForm} from "react-hook-form"
 import { publicAxios } from '@/components/axiosInstance/axios';
 
-
 interface FormData {
   password: string,
   confirm_password: string
 }
-
 
 export default function SetPassword() {
 
@@ -41,15 +39,32 @@ export default function SetPassword() {
       formState: { errors },
       handleSubmit,
       watch
-  } = useForm<FormData>();
+  } = useForm<FormData>({
+    mode: "onChange", 
+    defaultValues: { password: "" },
+  });
 
+  useEffect(() => {
+      if (errors.password?.message || errors.confirm_password?.message) {
+      setFormError(""); 
+      }
+  }, [errors.password?.message, errors.confirm_password?.message]);
+
+  const pwd = watch("password") ?? "";
+
+  // live checks for the checklist
+  const checks = {
+    len: pwd.length >= 8,
+    number: /\d/.test(pwd),
+    upper: /[A-Z]/.test(pwd),
+    lower: /[a-z]/.test(pwd),
+  }
 
   const onSubmit = async (data: FormData) => {
 
     const newPassword = data.password;
     const updateData = {newPassword}
     const otp_token = localStorage.getItem("otp_token");
-
 
     try {
       const response = await publicAxios.post("/users/resetPass", updateData,{
@@ -69,7 +84,7 @@ export default function SetPassword() {
         const errResponse = error.response.data;
         setFormError(<span>
           {errResponse.message} 
-          {" "}.Try again by clicking{" "}
+          . Try again by clicking{" "}
           <Link href='/auth/forgot-password' className='underline text-blue-500'>Forgot password</Link>
         </span>);
       } else {
@@ -78,7 +93,6 @@ export default function SetPassword() {
     } 
 
   }
-
 
   return (
       <div className="grid lg:grid-cols-2 gap-16 items-center min-h-screen">
@@ -100,8 +114,12 @@ export default function SetPassword() {
 
                 <div className="mb-4">
                     <div className="relative">
-                      <Input type={type} {...register("password", { required: "Password is required",  'minLength': {value: 8, 'message': "Password should be at least 8 characters"}})} className="h-[40px] w-full px-4 pr-10 py-3 text-sm font-normal border border-[#4A4C56] rounded-[8px] outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="New password"/>
-                     
+                      <Input type={type} {...register("password", { required: "Password is required",  'minLength': {value: 8, 'message': "Password should be at least 8 characters"}, validate: {
+                      hasNumber: (v) => /\d/.test(v) || "Include at least one number (0–9)",
+                      hasUpper: (v) => /[A-Z]/.test(v) || "Include at least one uppercase letter (A–Z)",
+                      hasLower: (v) => /[a-z]/.test(v) || "Include at least one lowercase letter (a–z)",
+                    },})} className="h-[40px] w-full px-4 pr-10 py-3 text-sm font-normal border border-[#4A4C56] rounded-[8px] outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="New password"/>
+                            
                       <button
                         type="button"
                         onClick={() => setType(type === "password" ? "text" : "password")}
@@ -115,31 +133,18 @@ export default function SetPassword() {
 
                     </div>
 
+                    {errors.password && (
+                      <p className="error-msg">{errors.password.message}</p>
+                    )}
+
                     
-                      {errors.password && (
-                        <p className="error-msg">{errors.password.message}</p>
-                      )}
-
-
-                    <div className='grid sm:grid-cols-2 gap-3 my-6'>
-                        <div className='flex items-center gap-2 text-xs font-normal'>
-                            <GreenCheck className='h-5 w-5'/>
-                            <p className='text-sm font-normal'>8 characters</p>
-                        </div>
-                         <div className='flex items-center gap-2 text-xs font-normal'>
-                            <GreenCheck className='h-5 w-5'/>
-                            <p className='text-sm font-normal'>Number (0-9)</p>
-                        </div>
-                         <div className='flex items-center gap-2 text-xs font-normal'>
-                            <GreenCheck className='h-5 w-5'/>
-                            <p className='text-sm font-normal'>Uppercase letter (A-Z)</p>
-                        </div>
-                         <div className='flex items-center gap-2 text-xs font-normal'>
-                            <RedCross className='h-5 w-5'/>
-                            <p className='text-sm font-normal'>Lowercase letter (a-z)</p>
-                        </div>
-                    </div>
-
+                  {/* Live checklist */}
+                  <div className="grid sm:grid-cols-2 gap-3 my-6">
+                    <Rule ok={checks.len} label="8 characters" />
+                    <Rule ok={checks.number} label="Number (0-9)" />
+                    <Rule ok={checks.upper} label="Uppercase letter (A-Z)" />
+                    <Rule ok={checks.lower} label="Lowercase letter (a-z)" />
+                  </div>
                 </div>
 
                 <div className="mb-12">
@@ -177,9 +182,10 @@ export default function SetPassword() {
                 </div>
 
                 <div className="mb-6">
-                  {
-                    formError && <p className="error-msg text-center">{formError}</p>
-                  }
+                  {errors.password?.message ? null : formError && (
+                    <p className="error-msg text-center">{formError}</p>
+                  )}
+                 
                 </div>
 
                 <button type="submit" className="h-11 w-full rounded bg-primary-color font-base font-medium cursor-pointer">Reset Password</button>
@@ -189,6 +195,16 @@ export default function SetPassword() {
         <div className="hidden lg:block">
             <Image src='/images/sign-in-img.png' height={1000} width={1000} alt="Sign In Image" className="h-full w-full object-cover" />
         </div>
+    </div>
+  )
+}
+
+
+function Rule({ ok, label }: { ok: boolean; label: string }) {
+  return (
+    <div className="flex items-center gap-2 text-xs font-normal">
+      {ok ? <GreenCheck className="h-5 w-5" /> : <RedCross className="h-5 w-5" />}
+      <p className="text-sm font-normal">{label}</p>
     </div>
   )
 }

@@ -78,7 +78,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
       console.log(error)
       setError(
-        "Error from login: " +
           (error?.response?.data?.message || "Unknown error")
       );
       setUser(null);

@@ -22,6 +22,7 @@ import Streaming from "@/components/icons/Streaming";
 import Setting from "@/components/icons/Setting";
 import Logout from "@/components/icons/Logout";
 import TrashBin from "@/components/icons/TrashBin";
+import { useAuth } from "@/provider/AuthProvider";
 
 // Menu and Bottom items
 const menuItems = [
@@ -78,8 +79,9 @@ interface NotificationData {
 
 export default function ClientLayout({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
   const [notificationOpen, setNotificationOpen] = useState(false);
+
+  const {logout} = useAuth();
 
   const pathname = usePathname();
 
@@ -202,6 +204,12 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
     );
   };
 
+
+  // Handle Logout
+  const handleLogout = () => {
+    logout();
+  }
+
   return (
     <div className="flex  min-h-screen bg-[#0D121E] text-white">
       {sidebarOpen && (
@@ -263,10 +271,9 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
             const isActive = pathname === item.href;
             return (
               <div className="px-2 py-1" key={index}>
-                <Link
-                  href={item.href}
-                  // onClick={item.click ? handleLogout : undefined}
-                  className={`flex items-center text-base font-medium px-4 py-3 rounded-md gap-1 ${
+                <button
+                  onClick={handleLogout}
+                  className={`cursor-pointer w-full flex items-center text-base font-medium px-4 py-3 rounded-md gap-1 ${
                     isActive
                       ? "bg-[#7A24BC] primary-text font-medium"
                       : "text-[#A5A5AB] hover:bg-[#7A24BC]/50"
@@ -274,7 +281,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
                 >
                   {item.icon}
                   {item.label}
-                </Link>
+                </button>
               </div>
             );
           })}
