@@ -47,12 +47,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (token) {
         try {
           const { data } = await privateAxios.get("/users/get-me");
-          console.log(data)
+          // console.log(data)
           setUser(data?.data);
         } catch (error) {
           // localStorage.removeItem("authToken");
           setUser(null);
-          console.log("Auth error", error);
+          // console.log("Auth error", error);
         }
       }
       setIsLoading(false); // End loading (always runs)

@@ -208,7 +208,7 @@ export default function ContentTable() {
     queryFn: fetchContent,
   });
 
-  console.log(data);
+  // console.log(data);
 
   const [page, setPage] = useState(1);
   const pageSize = 5;
@@ -224,13 +224,13 @@ export default function ContentTable() {
       {/* filter */}
       <div className="mb-4 flex gap-4">
         <Select>
-          <SelectTrigger className="flex items-center gap-2 rounded border border-[color:var(--Gray-Black-50,#E9E9EA)] [background:#0D121E] px-8 py-2.5 border-solid ">
+          <SelectTrigger className="flex items-center gap-2 rounded border border-[color:var(--Gray-Black-50,#E9E9EA)] bg-[#0D121E] px-5 py-2.5 border-solid ">
             <SelectValue
-              className="text-white [font-family:Inter] text-sm font-normal leading-[100%]"
+              className=" [font-family:Inter] text-sm font-normal leading-[100%]"
               placeholder="Genre"
             />
           </SelectTrigger>
-          <SelectContent className="border border-[color:var(--Line-Color,#1B202C)] bg-red-500 rounded  min-w-24 max-w-24">
+          <SelectContent className="border border-[color:var(--Line-Color,#1B202C)] bg-[#0D121E] rounded min-w-[106px]  max-w-[106px]">
             <SelectGroup className="space-y-2 w-24">
               <SelectItem className="selectOption" value="action">
                 Action
@@ -258,12 +258,12 @@ export default function ContentTable() {
             </SelectGroup>
           </SelectContent>
         </Select>
-        {/* 2nd */}
+        {/* 3rd */}
         <Select>
-          <SelectTrigger className="rounded px-[30px] text-center">
+          <SelectTrigger className="rounded px-5 text-center">
             <SelectValue className="text-center" placeholder="Status" />
           </SelectTrigger>
-          <SelectContent className="border border-[color:var(--Line-Color,#1B202C)] [background:#0D121E] rounded">
+          <SelectContent className="border border-[color:var(--Line-Color,#1B202C)] [background:#0D121E] rounded min-w-25">
             <SelectGroup className="space-y-2">
               <SelectItem className="selectOption" value="published">
                 Published
