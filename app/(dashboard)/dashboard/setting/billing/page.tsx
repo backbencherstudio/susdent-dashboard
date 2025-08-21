@@ -35,27 +35,6 @@ export default function Billing() {
             expiry: "12/32",
             icon: <StripeIcon />
         },
-        {
-            id: 2,
-            name: "Visa",
-            last4: "1234",
-            expiry: "11/25",
-            icon: <VisaCardIcon />
-        },
-        {
-            id: 3,
-            name: "Paypal",
-            last4: "1234",
-            expiry: "11/25",
-            icon: <Paypal />
-        },
-        {
-            id: 4,
-            name: "MasterCard",
-            last4: "1234",
-            expiry: "11/25",
-            icon: <MasterCard />
-        }
     ];
 
   return (
@@ -67,27 +46,25 @@ export default function Billing() {
         <div className="bg-secondary-bg p-4 rounded-sm">
         <h2 className="text-lg font-medium mb-4">Payment method</h2>
 
-        <div className="grid sm:grid-cols-2 gap-5">
-            {
-                paymentMethods.map((method) => (
-                    <div key={method.id} className="bg-[#0D121E] py-6 px-4 rounded-[8px] border border-[#1B202C] flex items-center justify-between gap-5">
-                        <label htmlFor={`paymentMethod${method.id}`} className="flex items-center gap-3">
-                            <input type="radio" className="w-4 h-4" name="payment_method" id={`paymentMethod${method.id}`} />
-                            <div className="flex items-center gap-3">
-                                {method.icon}
-                                <div>
-                                    <p className="text-xs font-normal">{method.name} **** {method.last4}</p>
-                                    <p className="text-xs text-[#AEB9E1] font-normal">Expires on {method.expiry}</p>
+            <div className="grid sm:grid-cols-2 gap-5">
+                {
+                    paymentMethods.map((method) => (
+                        <div key={method.id} className="bg-[#0D121E] py-8 px-4 rounded-[8px] border border-[#1B202C] flex items-center justify-between gap-5">
+                            <label htmlFor={`paymentMethod${method.id}`} className="flex items-center gap-3">
+                                <div className="flex items-center gap-3">
+                                    {method.icon}
+                                    <div>
+                                        <p className="text-xs font-normal">{method.name} **** {method.last4}</p>
+                                        <p className="text-xs text-[#AEB9E1] font-normal">Expires on {method.expiry}</p>
+                                    </div>
                                 </div>
-                            </div>
-                        </label>
-                        <button className="cursor-pointer">
-                            <Image src="/icons/close.svg" alt="Edit" width={20} height={20} className="w-3 h-3" />
-                        </button>
-                    </div>
-                ))
-            }
-        </div>
+                            </label>
+                        </div>
+                    ))
+                }
+            </div>
+
+            <p className="text-sm mt-2 px-3 py-2 rounded border border-[#f8fafc36] w-fit">Stripe accept all the type of payments (Visa, MasterCard, Paypal and more)</p>
         </div>
 
         {/* Billing Details */}

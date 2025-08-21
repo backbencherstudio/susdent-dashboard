@@ -50,11 +50,11 @@ const menuItems = [
     icon: <Subscription className="w-[18px] h-[18px]"/>,
     label: "Subscription",
   },
-  {
+  /* {
     href: "/dashboard/live-streaming",
     icon: <Streaming className="w-[18px] h-[18px]"/>,
     label: "Live Streaming",
-  },
+  }, */
   {
     href: "/dashboard/setting",
     icon: <Setting className="w-[18px] h-[18px]"/>,

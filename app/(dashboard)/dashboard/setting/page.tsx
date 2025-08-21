@@ -16,7 +16,7 @@ import {
 import Tabs from "@/components/pages/setting/Tabs";
 import { useAuth } from "@/provider/AuthProvider";
 
-import { useForm} from "react-hook-form"
+import { useForm} from "react-hook-form";
 import { privateAxios } from "@/components/axiosInstance/axios";
 import { toast } from "sonner";
 
@@ -24,12 +24,25 @@ interface CityData {
   label: string,
   value: string
 }
+
+interface CountryData {
+  label: string,
+  value: string
+}
+
+interface StateData {
+  label: string,
+  value: string
+}
+
 interface FormData{
   name: string,
   email: string,
   date_of_birth: string,
   address: string,
   phone_number: string,
+  country: string | null,
+  state: string | null,
   city: string | null,
   postal_code: string,
   bio: string
@@ -120,6 +133,36 @@ export default function Setting() {
       value: "Feni",
     },
   ]
+
+  // Country
+  const countries: CountryData[] = [
+    {
+      label: "USA",
+      value: "USA"
+    },
+    {
+      label: "Franch",
+      value: "Franch",
+    },
+    {
+      label: "England",
+      value: "England",
+    },
+  ]
+
+  // State
+  const states: StateData[] = [
+    {
+      label: "8080 Railroad St.",
+      value: "8080 Railroad St."
+    },
+    {
+      label: "States 2",
+      value: "States 2",
+    },
+  ]
+
+  console.log(user);
 
   const {
     register,
@@ -219,40 +262,64 @@ export default function Setting() {
                 </div>
               </div>
 
-              {/* Language */}
-              {/* <div>
-                <Label className="text-base font-mediumd mb-3">Language</Label>
-
-                <Select
-                  value={user?.language} 
-                  onValueChange={(val) => setValue("language", val)} 
-                  {...register("language")}
-                >
-                  <SelectTrigger className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color">
-                    <SelectValue placeholder="Select" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-secondary-bg text-white border border-slate-700 rounded">
-                    {
-                      languages.map((language, idx) => {
-                        return (
-                          <SelectItem key={idx} value={language.value} className="cursor-pointer">{language.label}</SelectItem>
-                        )
-                      })
-                    }
-                  </SelectContent>
-                </Select>
-              </div> */}
-
               {/* Address */}
-              {/* <div>
+              <div>
                 <Label className="text-base font-mediumd mb-3">Address</Label>
                 <Input {...register("address")} defaultValue={user?.address} className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter your address" />
-              </div> */}
+              </div>
 
               {/* Phone */}
               <div>
                 <Label className="text-base font-mediumd mb-3">Phone</Label>
                 <Input {...register("phone_number")} defaultValue={user?.phone_number} className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter phone" />
+              </div>
+
+              {/* Country */}
+              <div>
+                <Label className="text-base font-mediumd mb-3">Country</Label>
+
+                <Select
+                value={user?.country}
+                onValueChange={(val) => setValue("country", val)} 
+                {...register("country")}
+                >
+                  <SelectTrigger className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-secondary-bg text-white border border-slate-700 rounded">
+                     {
+                      countries.map((country, idx) => {
+                        return (
+                          <SelectItem key={idx} value={country.value} className="cursor-pointer">{country.label}</SelectItem>
+                        )
+                      })
+                    }
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* States */}
+              <div>
+                <Label className="text-base font-mediumd mb-3">State</Label>
+
+                <Select
+                value={user?.state}
+                onValueChange={(val) => setValue("state", val)} 
+                {...register("state")}
+                >
+                  <SelectTrigger className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color">
+                    <SelectValue placeholder="Select" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-secondary-bg text-white border border-slate-700 rounded">
+                     {
+                      states.map((state, idx) => {
+                        return (
+                          <SelectItem key={idx} value={state.value} className="cursor-pointer">{state.label}</SelectItem>
+                        )
+                      })
+                    }
+                  </SelectContent>
+                </Select>
               </div>
 
               {/* City */}

@@ -202,7 +202,11 @@ body {
 
 /* Error Message */
 .error-msg {
-  @apply text-[#e70d0d] text-sm my-1;
+  @apply text-[#ff0000e3] text-sm my-1;
+}
+
+.success-msg {
+  @apply text-[#2ECC71] text-sm my-1;
 }
 
 /* OTP era */
