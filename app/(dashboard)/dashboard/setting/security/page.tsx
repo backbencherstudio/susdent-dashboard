@@ -267,7 +267,7 @@ export default function Setting() {
                 <p className="text-sm font-normal text-[#A5A5AB]">Connect to Google</p>
             </div>
 
-            <Switch defaultChecked className="cursor-pointer custom-switch"/>
+            <Switch  checked className="cursor-pointer custom-switch"/>
         </div>
 
         {/* Phone number verification */}

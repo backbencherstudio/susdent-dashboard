@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/provider/AuthProvider";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form"
 
@@ -32,6 +32,7 @@ function getCookie(name: string): string {
 export default function SignIn() {
   const {error, login, user, isLoading} = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   // if user already login redirect to dashboard
   if(!isLoading && user)
@@ -99,41 +100,23 @@ export default function SignIn() {
 
   }
 
-  // Google Login
-  const handleGoogleLogin = async () => {
+  // Handle Google OAuth token after redirect
+  useEffect(() => {
+    const token = searchParams.get('token');
+    if (token) {
+      // Save token to localStorage
+      localStorage.setItem('authToken', token);
+      console.log('User token saved:', token);
+      
+      // Redirect to dashboard
+      router.push('/dashboard');
+    }
+  }, [searchParams, router]);
 
-    /* fetch("https://decisions-spanish-protecting-anime.trycloudflare.com/api/users/auth/google" , {
-      method:"GET",
-      headers:{
-        "Content-Type": "application/json",
-         "Origin": window.location.origin,  
-      }
-    })
-    .then((res) => res.json())
-    .then((data) => {
-      console.log(data);
-    }) */
-
-
-    //  try {
-    //    const res = await publicAxios.get("/users/auth/google");
-    //    console.log('Top'+ JSON.stringify(res));
-    //  } catch (error: any) {
-    //    if (error.response) 
-    //   {
-    //     const errResponse = error.response.data;
-    //     console.log("Bottom"+ errResponse);
-    //     setFormError(<span>
-    //       {errResponse.message} 
-    //       . Try again by clicking{" "}
-    //       <Link href='/auth/forgot-password' className='underline text-blue-500'>Forgot password</Link>
-    //     </span>);
-    //   } else {
-    //     console.log('Network error');
-    //     //setFormError('Network error: Failed to reach server');
-    //   }
-    //  }
-  }
+    const handleGoogleLogin = () => {
+    window.location.href = 'https://decisions-spanish-protecting-anime.trycloudflare.com/api/users/auth/google';
+  };
+  
 
   return (
      <div className="grid lg:grid-cols-2 gap-16 items-center min-h-screen">
