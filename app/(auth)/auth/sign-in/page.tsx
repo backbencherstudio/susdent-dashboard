@@ -11,7 +11,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-
 import { Controller, useForm } from "react-hook-form"
 
 interface formData {
@@ -31,8 +30,16 @@ function getCookie(name: string): string {
 }
 
 export default function SignIn() {
-  const {error, login} = useAuth();
+  const {error, login, user, isLoading} = useAuth();
   const router = useRouter();
+
+  // if user already login redirect to dashboard
+  if(!isLoading && user)
+  {  
+    router.push("/dashboard");
+  }
+
+
   const [type, setType] = React.useState<'password' | 'text'>('password');
 
   const [savedEmail, setSavedEmail] = useState("");
@@ -93,37 +100,44 @@ export default function SignIn() {
   }
 
   // Google Login
-  const handleGoogleLogin = async (type : React.ReactNode) => {
-   if(type == "Google")
-   {
-    const data = {
-      idToken: "sdlfkdshgsdlfkwoeihgdegsdgoiadjglkdhgdsoif"
-    }
+  const handleGoogleLogin = async () => {
 
-     try {
-       const res = await publicAxios.patch("/users/google-login", data);
-       console.log('Top'+ res);
-     } catch (error: any) {
-       if (error.response) 
-      {
-        const errResponse = error.response.data;
-        console.log("Bottom"+ errResponse);
-        /* setFormError(<span>
-          {errResponse.message} 
-          . Try again by clicking{" "}
-          <Link href='/auth/forgot-password' className='underline text-blue-500'>Forgot password</Link>
-        </span>); */
-      } else {
-        console.log('Network error');
-        //setFormError('Network error: Failed to reach server');
+    /* fetch("https://decisions-spanish-protecting-anime.trycloudflare.com/api/users/auth/google" , {
+      method:"GET",
+      headers:{
+        "Content-Type": "application/json",
+         "Origin": window.location.origin,  
       }
-     }
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log(data);
+    }) */
 
-   }
+
+    //  try {
+    //    const res = await publicAxios.get("/users/auth/google");
+    //    console.log('Top'+ JSON.stringify(res));
+    //  } catch (error: any) {
+    //    if (error.response) 
+    //   {
+    //     const errResponse = error.response.data;
+    //     console.log("Bottom"+ errResponse);
+    //     setFormError(<span>
+    //       {errResponse.message} 
+    //       . Try again by clicking{" "}
+    //       <Link href='/auth/forgot-password' className='underline text-blue-500'>Forgot password</Link>
+    //     </span>);
+    //   } else {
+    //     console.log('Network error');
+    //     //setFormError('Network error: Failed to reach server');
+    //   }
+    //  }
   }
+
   return (
      <div className="grid lg:grid-cols-2 gap-16 items-center min-h-screen">
-        <div className="text-white py-10 max-w-[500px] lg:max-w-full mx-auto lg:mx-0">
+        <div className="text-white py-10 max-w-[500px] w-full lg:max-w-full mx-auto lg:mx-0">
 
             <Link href='/auth'>
                <Image src='/images/logo.png' height={300} width={300} alt="Logo" className="w-[216px] h-[80px] block mx-auto" />

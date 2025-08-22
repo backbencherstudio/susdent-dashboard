@@ -68,7 +68,7 @@ export default function VerifyCode() {
 
   return (
    <div className="grid lg:grid-cols-2 gap-16 items-center min-h-screen">
-        <div className="text-white py-10 max-w-[500px] lg:max-w-full mx-auto lg:mx-0">
+        <div className="text-white py-10 max-w-[500px] w-full lg:max-w-full mx-auto lg:mx-0">
             
             <Link href='/auth'>
                <Image src='/images/logo.png' height={300} width={300} alt="Logo" className="w-[216px] h-[80px] block mx-auto" />
@@ -119,18 +119,12 @@ export default function VerifyCode() {
                                     <InputOTPSlot
                                     key={idx}
                                     index={idx}
-                                    className="w-full h-[60px] lg:h-[80px]
+                                     className="w-full h-[60px] lg:h-[80px]
                                     text-center text-xl md:text-xl xl:text-2xl
                                     border border-[#4A4C56] rounded-[10px]
-                                    outline-none 
-                                    data-[state=selected]:ring-0 data-[state=selected]:ring-transparent
-                                    data-[state=selected]:shadow-none data-[state=selected]:border-primary-color
-                                    !ring-0 !shadow-none "
+                                    "
                                     />
                                 ))}
-
-                                {/* w-full h-[60px] lg:h-[80px] text-center text-xl md:text-xl xl:text-2xl border border-[#4A4C56] rounded-[10px] outline-none focus-visible:ring-0 focus-visible:border-primary-color */}
-
 
                                 </InputOTPGroup>
                             </InputOTP>

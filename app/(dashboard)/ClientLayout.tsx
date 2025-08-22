@@ -227,7 +227,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
       >
         {/* Logo */}
         <div className="flex items-center py-8 pl-12">
-          <Link href="/">
+          <Link href="/dashboard">
             <Image
               src={logo}
               alt="logo"

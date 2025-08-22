@@ -191,25 +191,18 @@ const columns: ColumnDef<SubscriptionDetail>[] = [
 
 export default function SubscriptionTable() {
 
-   const { data, isLoading, error, refetch } = useQuery({
+   /* const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['subscription'],
     queryFn: async () =>
     {
       const res = await privateAxios.get("/payments/getAllSubscriptions");
       return res.data;
     }
-  })
-
-  
-
-
-
-  console.log(data);
+  }) */
 
   /*  if (isLoading) return <p>Loading...</p>;
   if (error) return <p>error</p>; */
   
-
 
   const [page, setPage] = useState(1);
   const pageSize = 5;
