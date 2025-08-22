@@ -48,8 +48,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (token) {
         try {
           const { data } = await privateAxios.get("/users/get-me");
-          //console.log(data)
-          setUser(data?.data);
+
+          if(data?.data?.role == "admin")
+          {
+            setUser(data?.data);
+          }
+          else 
+          {
+            localStorage.removeItem("authToken");
+          }
+
         } catch (error) {
           // localStorage.removeItem("authToken");
           setUser(null);

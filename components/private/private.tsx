@@ -26,9 +26,11 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
     return <div className="text-center p-10">Loading...</div>;
   }
 
-  if (user?.role !== "admin") {
-    return null; // Or a message/component for unauthorized access
-  }
+ 
+   if (user?.role !== "admin") {
+      return null; // Or a message/component for unauthorized access
+    }
+
 
   return <>{children}</>;
 };

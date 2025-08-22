@@ -106,14 +106,24 @@ export default function SignIn() {
     if (token) {
       // Save token to localStorage
       localStorage.setItem('authToken', token);
-      console.log('User token saved:', token);
-      
-      // Redirect to dashboard
       router.push('/dashboard');
+  
+     /*  if(!isLoading && user)
+      {
+        localStorage.setItem('authToken', token);
+        // Redirect to dashboard
+        router.push('/dashboard');
+      }
+      else 
+      {
+        localStorage.removeItem('authToken');
+        router.push('/auth');
+      } */
+
     }
   }, [searchParams, router]);
 
-    const handleGoogleLogin = () => {
+  const handleGoogleLogin = () => {
     window.location.href = 'https://decisions-spanish-protecting-anime.trycloudflare.com/api/users/auth/google';
   };
   
