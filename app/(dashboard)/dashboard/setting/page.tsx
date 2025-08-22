@@ -162,7 +162,7 @@ export default function Setting() {
     },
   ]
 
-  console.log(user);
+  //console.log(user);
 
   const {
     register,

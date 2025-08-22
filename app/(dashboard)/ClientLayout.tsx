@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 // Importing Lucide Icons
 import {
   Menu,
+  MessageCircleQuestionMark,
 } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
@@ -50,11 +51,11 @@ const menuItems = [
     icon: <Subscription className="w-[18px] h-[18px]"/>,
     label: "Subscription",
   },
-  /* {
-    href: "/dashboard/live-streaming",
-    icon: <Streaming className="w-[18px] h-[18px]"/>,
-    label: "Live Streaming",
-  }, */
+  {
+    href: "/dashboard/help-support",
+    icon: <MessageCircleQuestionMark className="w-[18px] h-[18px]"/>,
+    label: "Help & Support",
+  },
   {
     href: "/dashboard/setting",
     icon: <Setting className="w-[18px] h-[18px]"/>,
