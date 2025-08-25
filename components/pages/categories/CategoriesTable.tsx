@@ -4,13 +4,16 @@ import { privateAxios } from "@/components/axiosInstance/axios";
 import DeleteIcon from "@/components/icons/DeleteIcon";
 import EditIcon from "@/components/icons/EditIcon";
 import { DataTable } from "@/components/reusable/data-table";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { Delete, Edit, Link, Trash } from "lucide-react";
+import { useState } from "react";
+import AddCategories from "./AddCategories";
+import DeleteCategory from "./DeleteCategory";
 
-
-type Category = {
+export type Category = {
   created_at: string;
   deleted_at: string | null;
   id: string;
@@ -43,6 +46,15 @@ type Category = {
 
 const columns: ColumnDef<Category>[] = [
   {
+    accessorKey: "id",
+    header: "Category Id",
+    cell: ({ row }) => (
+      <span className="hover:cursor-pointer" title={row.original.id}>
+        {String(row.original.id).slice(0, 6)}...
+      </span>
+    ),
+  },
+  {
     accessorKey: "name",
     header: "Category Name",
     cell: ({ row }) => <span className="">{row.original.name}</span>,
@@ -50,16 +62,26 @@ const columns: ColumnDef<Category>[] = [
   {
     accessorKey: "status",
     header: "Status",
-    cell: ({ row }) => <span className="">{row.original.status}</span>,
+    cell: ({ row }) => (
+      <span
+        className={`${
+          row.original.status === 1 ? "text-green-500/90" : "text-red-500/90"
+        } `}
+      >
+        {row.original.status === 1 ? "Active" : "Deactive"}
+      </span>
+    ),
   },
   {
     accessorKey: "action",
     header: "Action",
     cell: ({ row }) => (
       <span className="">
-        <div className="flex gap-2">
-          <EditIcon className=" cursor-pointer" />
-          <DeleteIcon className=" cursor-pointer" />
+        <div className="flex gap-3.5">
+          {/* <EditIcon className=" cursor-pointer" /> */}
+          <AddCategories category={row.original} />
+
+          <DeleteCategory categoryId={row.original.id}/>
         </div>
       </span>
     ),
@@ -73,15 +95,27 @@ const fetchCategoris = async () => {
 
 export default function CategoriesTable() {
   // fetch categories
-  const { data:categories, isLoading, error } = useQuery({
+  const {
+    data: categories,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
       const response = await privateAxios.get("/admin/categories/categories");
       return response.data.data;
     },
     // queryFn: () => privateAxios.get("/admin/categories/categories")
-    
   });
+
+  const [page, setPage] = useState(1);
+  const pageSize = 5;
+
+  const total = categories?.length;
+  const paginatedData = categories?.slice(
+    (page - 1) * pageSize,
+    page * pageSize
+  );
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -98,14 +132,22 @@ export default function CategoriesTable() {
           Categories Management
         </h2>
 
-        <div className="flex justify-center items-center gap-2.5 [background:var(--Primary-color,#7A24BC)] px-5 py-2.5 rounded-lg cursor-pointer">
+        {/* <button className="primary-btn">
           + Add category
-        </div>
+        </button> */}
+        <AddCategories category={null} />
       </div>
 
       {/* all categorties table */}
       <div>
-        <DataTable columns={columns} data={categories}>
+        <DataTable
+          columns={columns}
+          data={paginatedData}
+          page={page}
+          pageSize={pageSize}
+          total={total}
+          onPageChange={setPage}
+        >
           <div className="">
             <h2 className="self-stretch text-[color:var(--W,#FFF)]  text-lg font-medium leading-[160%] mb-[18px]">
               All Categories
