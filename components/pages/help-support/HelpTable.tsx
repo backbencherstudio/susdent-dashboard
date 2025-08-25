@@ -10,6 +10,8 @@ import { toast } from "sonner";
 interface UserDetail {
   id: number;
   user_id: string;
+  username: string;
+  email: string;
   subject: string;
   description: string;
   created_at: string;
@@ -30,8 +32,8 @@ export default function HelpTable() {
   },
   {
     accessorKey: "user_id",
-    header: "User ID",
-    cell: ({ row }) => <span className="">{row.original.user_id}</span>,
+    header: "User Name / Email",
+    cell: ({ row }) => <span className="">{row.original.username} <br /> {row.original.email}</span>,
   },
   {
     accessorKey: "subject",
@@ -97,6 +99,7 @@ export default function HelpTable() {
     }
   })
 
+
   const [page, setPage] = useState(1);
   const pageSize = 10;
 
@@ -105,8 +108,9 @@ export default function HelpTable() {
     (page - 1) * pageSize,
     page * pageSize
   );
+ 
 
-   //Handle Status
+  //Handle Status
   const handleStatus = async (id: number) => {
 
     try {
@@ -120,7 +124,7 @@ export default function HelpTable() {
             color: "#fff", 
           },
         });
-       refetch();
+      //  refetch(); 
       }
     } catch (errorData: any) {
        toast.error("Status updated failed", {
@@ -133,6 +137,7 @@ export default function HelpTable() {
     }
 
   }
+  
 
   if (isLoading) return null;
   if (error) return null;
