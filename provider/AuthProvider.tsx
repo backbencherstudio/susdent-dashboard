@@ -1,6 +1,7 @@
 "use client";
  
 import { privateAxios, publicAxios } from "@/components/axiosInstance/axios";
+import Link from "next/link";
 import { createContext, useContext, useEffect, useState } from "react";
  
 interface AuthContextType {
@@ -47,12 +48,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (token) {
         try {
           const { data } = await privateAxios.get("/users/get-me");
-          // console.log(data)
-          setUser(data?.data);
+
+          if(data?.data?.role == "admin")
+          {
+            setUser(data?.data);
+          }
+          else 
+          {
+            localStorage.removeItem("authToken");
+          }
+
         } catch (error) {
           // localStorage.removeItem("authToken");
           setUser(null);
-          // console.log("Auth error", error);
+          //console.log("Auth error", error);
         }
       }
       setIsLoading(false); // End loading (always runs)
@@ -76,10 +85,19 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
     } catch (error: any) {
 
-      console.log(error)
+      let errorRes = error?.response?.data?.message;
+
+      if(errorRes === "deactivated")
+      {
+        errorRes = (
+          <>
+          Your account is deactivated. Please activate your account to log in.{" "}
+          <Link href='/auth/active-account' className="text-blue-400 underline">Activate your account</Link>
+          </>
+        ) 
+      }
       setError(
-        "Error from login: " +
-          (error?.response?.data?.message || "Unknown error")
+          (errorRes || "Unknown error")
       );
       setUser(null);
     } finally {

@@ -149,7 +149,7 @@ export function   DataTable<TData, TValue>({
           </Table>
         </div>
       </div>
-      <div className="my-6">
+      <div className="my-6 pb-4">
         <Paginations
           page={page}
           pageSize={pageSize}

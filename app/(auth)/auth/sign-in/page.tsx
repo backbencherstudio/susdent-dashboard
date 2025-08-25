@@ -1,5 +1,6 @@
 "use client";
 
+import { publicAxios } from "@/components/axiosInstance/axios";
 import EyeIcon from "@/components/icons/EyeIcon";
 import EyeSlash from "@/components/icons/EyeSlash";
 import SocialBtn from "@/components/pages/auth/SocialBtn";
@@ -8,9 +9,8 @@ import { Label } from "@/components/ui/label";
 import { useAuth } from "@/provider/AuthProvider";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-
 import { Controller, useForm } from "react-hook-form"
 
 interface formData {
@@ -30,8 +30,17 @@ function getCookie(name: string): string {
 }
 
 export default function SignIn() {
-  const {error, login} = useAuth();
+  const {error, login, user, isLoading} = useAuth();
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // if user already login redirect to dashboard
+  if(!isLoading && user)
+  {  
+    router.push("/dashboard");
+  }
+
+
   const [type, setType] = React.useState<'password' | 'text'>('password');
 
   const [savedEmail, setSavedEmail] = useState("");
@@ -44,8 +53,6 @@ export default function SignIn() {
     control,
     setValue
   } = useForm<formData>();
-
-
 
   // Load saved email and password from cookie
   useEffect(() => {
@@ -92,9 +99,26 @@ export default function SignIn() {
     }
 
   }
+
+  // Handle Google OAuth token after redirect
+  useEffect(() => {
+    const token = searchParams.get('token');
+    if (token) {
+      // Save token to localStorage
+      localStorage.setItem('authToken', token);
+      router.push('/dashboard');
+
+    }
+  }, [searchParams, router]);
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/auth/google`;
+  };
+  
+
   return (
      <div className="grid lg:grid-cols-2 gap-16 items-center min-h-screen">
-        <div className="text-white py-10 max-w-[500px] lg:max-w-full mx-auto lg:mx-0">
+        <div className="text-white py-10 max-w-[500px] w-full lg:max-w-full mx-auto lg:mx-0">
 
             <Link href='/auth'>
                <Image src='/images/logo.png' height={300} width={300} alt="Logo" className="w-[216px] h-[80px] block mx-auto" />
@@ -183,9 +207,7 @@ export default function SignIn() {
 
             {/* Social Login */}
             <div className="flex flex-wrap items-center justify-center gap-4">
-              <SocialBtn image="/icons/google.png" label="Google" />
-              <SocialBtn image="/icons/apple.svg" label="Apple" />
-              <SocialBtn image="/icons/facebook.svg" label="Facebook" />
+              <SocialBtn handleGoogleLogin = {handleGoogleLogin} image="/icons/google.png" label="Google" />
             </div>
 
         </div>

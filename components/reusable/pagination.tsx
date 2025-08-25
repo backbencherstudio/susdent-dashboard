@@ -39,6 +39,7 @@ export function Paginations({
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
+            className="cursor-pointer"
             onClick={(e) => {
               e.preventDefault();
               handlePageChange(page - 1);
@@ -49,6 +50,7 @@ export function Paginations({
         {pages.map((p) => (
           <PaginationItem key={p}>
             <PaginationLink
+              className="cursor-pointer"
               isActive={p === page}
               onClick={(e) => {
                 e.preventDefault();
@@ -66,6 +68,7 @@ export function Paginations({
         )}
         <PaginationItem>
           <PaginationNext
+            className="cursor-pointer"
             onClick={(e) => {
               e.preventDefault();
               handlePageChange(page + 1);
