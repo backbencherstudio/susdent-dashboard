@@ -70,15 +70,23 @@ export default function AddCategories({ category }: CategoryModalProps) {
   }, [category]);
 
   const handleSubmit = async () => {
-    if (!formData.name || !formData.slug) {
-      toast.error("All fields are required");
+    if (!formData.name) {
+      toast.error("Name is required");
       return;
     }
+
+    const generateSlug = formData.name
+      .toLocaleLowerCase()
+      .trim()
+      .replace(/\s+/g, "-") 
+      .replace(/[^\w\-]+/g, "");
+
+    const payload = {...formData, slug: generateSlug}
 
     if (category) {
       // Update category
       updateCategory(
-        { id: category.id, data: formData },
+        { id: category.id, data: payload },
         {
           onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["categories"] });
@@ -90,7 +98,7 @@ export default function AddCategories({ category }: CategoryModalProps) {
       );
     } else {
       // Create category
-      createCategory(formData, {
+      createCategory(payload, {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: ["categories"] });
           setIsOpen(false);
@@ -138,7 +146,7 @@ export default function AddCategories({ category }: CategoryModalProps) {
             />
           </div>
 
-          <div className="grid gap-3">
+          {/* <div className="grid gap-3">
             <Label htmlFor="category-slug">Slug</Label>
             <Input
               id="category-slug"
@@ -148,7 +156,7 @@ export default function AddCategories({ category }: CategoryModalProps) {
                 setFormData({ ...formData, slug: e.target.value })
               }
             />
-          </div>
+          </div> */}
 
           <div className="grid gap-3">
             <Label htmlFor="category-status">Status</Label>
@@ -158,9 +166,9 @@ export default function AddCategories({ category }: CategoryModalProps) {
               onChange={(e) =>
                 setFormData({ ...formData, status: Number(e.target.value) })
               }
-              className="bg-[#1B202C] text-white border rounded-sm px-2 py-2"
+              className="bg-[#1B202C]/80 text-white border rounded-sm px-2 py-2"
             >
-              <option  value={1}>Active</option>
+              <option value={1}>Active</option>
               <option value={0}>Deactive</option>
             </select>
           </div>

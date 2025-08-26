@@ -14,8 +14,10 @@ import {
 } from "@/components/ui/select";
 import { Upload } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { privateAxios } from "@/components/axiosInstance/axios";
+import { fetchCategoris } from "../categories/CategoriesTable";
+
 
 type Inputs = {
   title: string;
@@ -71,7 +73,6 @@ export function ContentUploadForm() {
         formData.append("category_id", data.contentCategory);
         formData.append("type", data.contentType);
 
-        
         console.log("FormData Contents:");
         formData.forEach((value, key) => {
           console.log(`${key}: ${value}`);
@@ -94,7 +95,17 @@ export function ContentUploadForm() {
   });
   const onSubmit: SubmitHandler<Inputs> = (data) => {
     console.log(data);
-    uploadContent.mutate(data);
+    uploadContent.mutate(data, {
+      onSuccess: () => {
+        console.log("UPdate done")
+        // toast.success("Content Updated Successfully!");
+        // Optional: Reset form or redirect
+      },
+      onError: (error: Error) => {
+        // toast.error(error.message || "Failed to upload content");
+        console.log("Error form update content")
+      },
+    });
   };
 
   // Drag handlers
@@ -130,14 +141,19 @@ export function ContentUploadForm() {
     setValue("file", vidFile, { shouldValidate: true, shouldDirty: true });
   };
 
+  const { data: categoriesList, isLoading: categoriesLoading } = useQuery({
+    queryKey: ["categories"],
+    queryFn: fetchCategoris,
+  });
+
   return (
     <div>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="grid grid-cols-1 lg:grid-cols-3 gap-8 sm:h-[580px]"
+        className="grid grid-cols-1 lg:grid-cols-3 lg:gap-8 sm:h-[580px]"
       >
         {/* Upload Area */}
-        <div className="space-y-6 overflow-hidden bg-accent h-76 md:h-full">
+        <div className="space-y-6 overflow-hidden  h-76 md:h-[340px] lg:h-full">
           <div
             className={`border border-dashed flex flex-col items-center justify-between h-full rounded-lg p-8 text-center transition-colors bg-[#131824] ${
               dragActive
@@ -297,10 +313,11 @@ export function ContentUploadForm() {
                   <SelectValue placeholder="Select content type" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#131824] border-slate-700 text-white">
-                  <SelectItem value="movie">Movie</SelectItem>
-                  <SelectItem value="series">Series</SelectItem>
-                  <SelectItem value="documentary">Documentary</SelectItem>
-                  <SelectItem value="short">Short Film</SelectItem>
+                  {categoriesList?.data?.map((cat: any) => (
+                    <SelectItem key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <input
@@ -401,9 +418,18 @@ export function ContentUploadForm() {
           <div>
             <Button
               type="submit"
-              className="w-full px-6 py-[13px] bg-[#7A24BC]"
+              className={`w-full px-6 py-[13px] ${
+                uploadContent.isError
+                  ? "bg-red-600 hover:bg-red-700"
+                  : "bg-[#7A24BC] hover:bg-[#7A24A1]"
+              } cursor-pointer`}
+              disabled={uploadContent.isPending}
             >
-              Submit
+              {uploadContent.isPending
+                ? "Uploading..."
+                : uploadContent.isError
+                ? "Try Again"
+                : "Upload"}
             </Button>
           </div>
         </div>

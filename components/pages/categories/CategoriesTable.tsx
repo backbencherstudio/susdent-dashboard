@@ -88,7 +88,7 @@ const columns: ColumnDef<Category>[] = [
   },
 ];
 
-const fetchCategoris = async () => {
+export const fetchCategoris = async () => {
   const res = await privateAxios.get("/admin/categories/categories");
   return res.data;
 };
