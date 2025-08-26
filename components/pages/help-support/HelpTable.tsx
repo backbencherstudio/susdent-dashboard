@@ -124,7 +124,7 @@ export default function HelpTable() {
             color: "#fff", 
           },
         });
-      //  refetch(); 
+      refetch(); 
       }
     } catch (errorData: any) {
        toast.error("Status updated failed", {

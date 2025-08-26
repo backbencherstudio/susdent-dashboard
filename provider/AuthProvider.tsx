@@ -2,11 +2,14 @@
  
 import { privateAxios, publicAxios } from "@/components/axiosInstance/axios";
 import Link from "next/link";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+
+import { io } from "socket.io-client";
  
 interface AuthContextType {
   user: any;
   isLoading: boolean;
+  isNotification: any;
   error: string | null;
   login: (credential: { email: string; password: string }) => Promise<void>;
   logout: () => Promise<void>;
@@ -16,6 +19,7 @@ interface AuthContextType {
 const defaultAuthContext: AuthContextType = {
   user: null,
   isLoading: true,
+  isNotification: null,
   error: null,
   login: async () => {},
   logout: async () => {},
@@ -38,9 +42,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isNotification, setIsNotification] = useState<any>(null);
  
   // console.log("Inside auth context", user);
-    useEffect(() => {
+  useEffect(() => {
     const checkUser = async () => {
       setIsLoading(true); // Start loading
       const token = localStorage.getItem("authToken");
@@ -104,6 +109,33 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setIsLoading(false);
     }
   };
+
+  // Socket For Real-time notification
+  const socket = useMemo(() => {
+    return io(process.env.NEXT_PUBLIC_NOTIFICATION_BASE_URL, {
+      extraHeaders: {
+        Auth: localStorage.getItem("authToken") || "",
+      },
+    });
+  }, []);
+
+  const handleNotification = useCallback( async (payload: any) => {
+    console.log(payload);
+    setIsNotification(payload)
+  },  [])
+  
+  useEffect(() => {
+    socket.on("notification", handleNotification);
+
+    /* socket.on("connect", () => {
+      console.log("Connect");
+    }); */
+    
+    return () =>{
+      socket.off('notification',  handleNotification)
+    }
+  }, [socket]);
+
        
   const logout = async () => {
     setIsLoading(true);
@@ -122,6 +154,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const authInfo: AuthContextType = {
     user,
     isLoading,
+    isNotification,
     error,
     login,
     logout,
