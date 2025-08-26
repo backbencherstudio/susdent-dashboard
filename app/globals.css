@@ -202,7 +202,11 @@ body {
 
 /* Error Message */
 .error-msg {
-  @apply text-[#e70d0d] text-sm my-1;
+  @apply text-[#ff0000e3] text-sm my-1;
+}
+
+.success-msg {
+  @apply text-[#2ECC71] text-sm my-1;
 }
 
 /* OTP era */
@@ -215,4 +219,10 @@ body {
 
 .otp-input-wrap > div > div > input {
   width: 100% !important;
+}
+
+
+
+.primary-btn {
+  @apply flex justify-center items-center gap-2.5 bg-[#7A24BC] px-5 py-2.5 rounded-lg cursor-pointer hover:bg-[#9B2BB9];
 }

@@ -1,9 +1,11 @@
 // src/lib/axios.js
 import axios from 'axios';
 
+const apiBaseURL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 // Public Axios instance (no auth)
 export const publicAxios = axios.create({
-  baseURL: "https://decisions-spanish-protecting-anime.trycloudflare.com/api",
+  baseURL: apiBaseURL, // base url coming from dotenv file
   headers: {
     // 'Content-Type': 'application/json',
   },
@@ -12,7 +14,7 @@ export const publicAxios = axios.create({
 
 // Private Axios instance (with auth)
 export const privateAxios = axios.create({
-  baseURL: "https://decisions-spanish-protecting-anime.trycloudflare.com/api",
+  baseURL: apiBaseURL,
   headers: {
     // 'Content-Type': 'application/json',
   },
@@ -39,7 +41,8 @@ privateAxios.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       // localStorage.removeItem('authToken');
-      window.location.href = '/auth/login';
+      
+      //window.location.href = '/auth/login';
     }
     return Promise.reject(error);
   }

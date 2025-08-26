@@ -15,7 +15,7 @@ export default function SearchIcon({ className }: { className?: string }) {
           d="M14.584 14.5833L18.334 18.3333"
           stroke="#4A4C56"
           strokeWidth="1.5"
-          strokeLinecap="round"sszzzzccc
+          strokeLinecap="round"
           strokeLinejoin="round"
         />
         <path

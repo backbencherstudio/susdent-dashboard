@@ -1,11 +1,15 @@
 "use client";
  
 import { privateAxios, publicAxios } from "@/components/axiosInstance/axios";
-import { createContext, useContext, useEffect, useState } from "react";
+import Link from "next/link";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+
+import { io } from "socket.io-client";
  
 interface AuthContextType {
   user: any;
   isLoading: boolean;
+  isNotification: any;
   error: string | null;
   login: (credential: { email: string; password: string }) => Promise<void>;
   logout: () => Promise<void>;
@@ -15,6 +19,7 @@ interface AuthContextType {
 const defaultAuthContext: AuthContextType = {
   user: null,
   isLoading: true,
+  isNotification: null,
   error: null,
   login: async () => {},
   logout: async () => {},
@@ -37,9 +42,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isNotification, setIsNotification] = useState<any>(null);
  
   // console.log("Inside auth context", user);
-    useEffect(() => {
+  useEffect(() => {
     const checkUser = async () => {
       setIsLoading(true); // Start loading
       const token = localStorage.getItem("authToken");
@@ -47,12 +53,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (token) {
         try {
           const { data } = await privateAxios.get("/users/get-me");
-          console.log(data)
-          setUser(data?.data);
+
+          if(data?.data?.role == "admin")
+          {
+            setUser(data?.data);
+          }
+          else 
+          {
+            localStorage.removeItem("authToken");
+          }
+
         } catch (error) {
           // localStorage.removeItem("authToken");
           setUser(null);
-          console.log("Auth error", error);
+          //console.log("Auth error", error);
         }
       }
       setIsLoading(false); // End loading (always runs)
@@ -76,16 +90,52 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       
     } catch (error: any) {
 
-      console.log(error)
+      let errorRes = error?.response?.data?.message;
+
+      if(errorRes === "deactivated")
+      {
+        errorRes = (
+          <>
+          Your account is deactivated. Please activate your account to log in.{" "}
+          <Link href='/auth/active-account' className="text-blue-400 underline">Activate your account</Link>
+          </>
+        ) 
+      }
       setError(
-        "Error from login: " +
-          (error?.response?.data?.message || "Unknown error")
+          (errorRes || "Unknown error")
       );
       setUser(null);
     } finally {
       setIsLoading(false);
     }
   };
+
+  // Socket For Real-time notification
+  const socket = useMemo(() => {
+    return io(process.env.NEXT_PUBLIC_NOTIFICATION_BASE_URL, {
+      extraHeaders: {
+        Auth: localStorage.getItem("authToken") || "",
+      },
+    });
+  }, []);
+
+  const handleNotification = useCallback( async (payload: any) => {
+    console.log(payload);
+    setIsNotification(payload)
+  },  [])
+  
+  useEffect(() => {
+    socket.on("notification", handleNotification);
+
+    /* socket.on("connect", () => {
+      console.log("Connect");
+    }); */
+    
+    return () =>{
+      socket.off('notification',  handleNotification)
+    }
+  }, [socket]);
+
        
   const logout = async () => {
     setIsLoading(true);
@@ -104,6 +154,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const authInfo: AuthContextType = {
     user,
     isLoading,
+    isNotification,
     error,
     login,
     logout,

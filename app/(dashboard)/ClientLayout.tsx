@@ -5,9 +5,17 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
 // Importing Lucide Icons
 import {
   Menu,
+  MessageCircleQuestionMark,
 } from "lucide-react";
 
 import { Input } from "@/components/ui/input";
@@ -18,10 +26,12 @@ import Content from "@/components/icons/Content";
 import Categories from "@/components/icons/Categories";
 import Users from "@/components/icons/Users";
 import Subscription from "@/components/icons/Subscription";
-import Streaming from "@/components/icons/Streaming";
 import Setting from "@/components/icons/Setting";
 import Logout from "@/components/icons/Logout";
-import TrashBin from "@/components/icons/TrashBin";
+import { useAuth } from "@/provider/AuthProvider";
+import { useQuery } from "@tanstack/react-query";
+import { privateAxios } from "@/components/axiosInstance/axios";
+import useGetDifference from "@/hooks/useGetDifference";
 
 // Menu and Bottom items
 const menuItems = [
@@ -50,9 +60,9 @@ const menuItems = [
     label: "Subscription",
   },
   {
-    href: "/dashboard/live-streaming",
-    icon: <Streaming className="w-[18px] h-[18px]"/>,
-    label: "Live Streaming",
+    href: "/dashboard/help-support",
+    icon: <MessageCircleQuestionMark className="w-[18px] h-[18px]"/>,
+    label: "Help & Support",
   },
   {
     href: "/dashboard/setting",
@@ -69,18 +79,11 @@ const bottomMenu = [
   },
 ];
 
-interface NotificationData {
-  id: number,
-  image: string,
-  name: string,
-  time: string
-}
-
 export default function ClientLayout({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-
   const [notificationOpen, setNotificationOpen] = useState(false);
-
+ 
+  const {logout, isNotification} = useAuth();
   const pathname = usePathname();
 
   // Fake user data (since we're not fetching real data)
@@ -96,35 +99,36 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // Notification Data
-  const notificationData: NotificationData[] = [
-    {
-      id: 1,
-      image: "/images/user-profile.svg",
-      name: "Darrell Steward",
-      time: "30 mn ago",
-    },
-     {
-      id: 2,
-      image: "/images/user-profile.svg",
-      name: "Darrell Steward",
-      time: "30 mn ago",
-    },
-     {
-      id: 3,
-      image: "/images/user-profile.svg",
-      name: "Darrell Steward",
-      time: "30 mn ago",
-    }
-  ]
+  // Last 4 Notification
+  const { isLoading, error, data: notificationData = [] } = useQuery({
+      queryKey: ['notificationData'],
+      queryFn: async () =>
+      {
+          const res = await privateAxios.get("/users/getAllNotifications");
+          return res.data.data;
+      }
+  })
 
+  const [page, setPage] = useState(1);
+  const pageSize = 4; // Number of items per page
+  const lastFourNotifications = notificationData.slice(
+      (page - 1) * pageSize,
+      page * pageSize
+  );
+
+  if (isLoading) return null;
+  if (error) return null;
 
   // Toggle the notification modal
-  const toggleNotification = (event: any) => {
-    event.stopPropagation();
+  const toggleNotification = () => {
     setNotificationOpen((prev) => !prev);
   };
 
+
+  // Handle Logout
+  const handleLogout = () => {
+    logout();
+  }
 
   const TopBar = () => {
     return (
@@ -140,36 +144,32 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
             <SearchIcon className="absolute bottom-[12.5px] right-4" />
           </div>
           <div className="mr-4 relative">
-            <div className="flex w-12 h-12 items-center gap-2.5 bg-[#7A24BC33] justify-center rounded-3xl cursor-pointer" onClick={toggleNotification}>
-              <BellIcon/>
-            </div>
 
-            <div>
-            {/* Notification Modal */}
-            {
-              notificationOpen && (
-                <div className="absolute top-[115%] -right-18 sm:right-0 w-[300px] sm:w-[400px] bg-gray3-border border border-[#1F2430] rounded-sm">
+            {/* Notification */}
+            <DropdownMenu>
+              <DropdownMenuTrigger className="shadow-none outline-0 cursor-pointer">
+                <div className="relative flex w-12 h-12 items-center gap-2.5 bg-[#7A24BC33] justify-center rounded-3xl cursor-pointer">
+                  <BellIcon/>
+                  {
+                    isNotification && <div className="absolute top-3 right-3 h-[8px] w-[8px] rounded-full bg-red-600"></div>
+                  }
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent className="bg-gray3-bg border-gray3-border text-white mr-2 sm:mr-14" style={{width:"300px"}}>
                   {/* Top */}
                   <div className="flex justify-between gap-2 p-4 border-b border-[#1F2430]">
                     <h1 className="text-base font-semibold">Notification</h1>
-                    <p><span className="py-[7px] px-3 rounded-[2px] bg-[#7A24BC1F] text-xs font-medium">5 Unread</span></p>
                   </div>
                   {/* Middle */}
                   <div>
                     {
-                      notificationData.map((notification) =>  {
+                      lastFourNotifications.map((notification: any) =>  {
                         return (
                           <div key={notification.id} className="p-4 flex items-center justify-between border-b border-[#1F2430]">
-                            <div className="flex items-center gap-2">
-                              <Image src={notification.image} height={300} width={300} alt="Profile" className="h-12 w-12 rounded-full" />
-                              <div>
-                                <h1 className="text-sm font-medium">{notification.name}</h1>
-                                <p className="text-xs mt-1">{notification.time}</p>
-                              </div>
+                            <div className="flex flex-col gap-1">
+                                <h1 className="text-sm font-medium">{notification.text}</h1>
+                                <p className="text-xs mt-1">{useGetDifference(notification.created_at)}</p>
                             </div>
-                            <button className="cursor-pointer">
-                              <TrashBin/>
-                            </button>
                           </div>
                         )
                       })
@@ -179,28 +179,39 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
                   <div className="p-4">
                     <Link href='/dashboard/setting/notification' className="bg-primary-color text-sm font-medium py-3 px-3 rounded w-full block text-center">View All Notifications</Link>
                   </div>
-                </div>
-              )
-            }
-            </div>
+              </DropdownMenuContent>
+            </DropdownMenu>  
           
           </div>
 
-          <div>
-            <div className="flex-shrink-0 rounded-full">
-              <Image
-                className="w-12 h-12 rounded-full"
-                src={user?.data?.avatar_url || "/images/user-profile.svg"}
-                width={48}
-                height={48}
-                alt="User"
-              />
-            </div>
-          </div>
+          {/* User Profile */}
+          <DropdownMenu>
+            <DropdownMenuTrigger className="shadow-none outline-0 cursor-pointer">
+               <div>
+                  <div className="flex-shrink-0 rounded-full">
+                    <Image
+                      className="w-12 h-12 rounded-full"
+                      src={user?.data?.avatar_url || "/images/user-profile.svg"}
+                      width={48}
+                      height={48}
+                      alt="User"
+                    />
+                  </div>
+                </div>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="max-w-fit bg-gray3-bg border-gray3-border text-white mr-4">
+              <DropdownMenuLabel className="flex items-center justify-center gap-1 cursor-pointer" onClick={handleLogout}>
+                <Logout className="w-[18px] h-[18px]"/>
+                <span>Log Out</span>
+              </DropdownMenuLabel>
+            </DropdownMenuContent>
+          </DropdownMenu>  
+
         </div>
       </div>
     );
   };
+
 
   return (
     <div className="flex  min-h-screen bg-[#0D121E] text-white">
@@ -219,7 +230,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
       >
         {/* Logo */}
         <div className="flex items-center py-8 pl-12">
-          <Link href="/">
+          <Link href="/dashboard">
             <Image
               src={logo}
               alt="logo"
@@ -263,10 +274,9 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
             const isActive = pathname === item.href;
             return (
               <div className="px-2 py-1" key={index}>
-                <Link
-                  href={item.href}
-                  // onClick={item.click ? handleLogout : undefined}
-                  className={`flex items-center text-base font-medium px-4 py-3 rounded-md gap-1 ${
+                <button
+                  onClick={handleLogout}
+                  className={`cursor-pointer w-full flex items-center text-base font-medium px-4 py-3 rounded-md gap-1 ${
                     isActive
                       ? "bg-[#7A24BC] primary-text font-medium"
                       : "text-[#A5A5AB] hover:bg-[#7A24BC]/50"
@@ -274,7 +284,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
                 >
                   {item.icon}
                   {item.label}
-                </Link>
+                </button>
               </div>
             );
           })}
