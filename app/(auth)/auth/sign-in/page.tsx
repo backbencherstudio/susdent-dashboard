@@ -6,11 +6,12 @@ import EyeSlash from "@/components/icons/EyeSlash";
 import SocialBtn from "@/components/pages/auth/SocialBtn";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { storage } from "@/lib/storage";
 import { useAuth } from "@/provider/AuthProvider";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, Suspense } from "react";
 import { Controller, useForm } from "react-hook-form"
 
 interface formData {
@@ -29,7 +30,7 @@ function getCookie(name: string): string {
   return "";
 }
 
-export default function SignIn() {
+function SignInContent() {
   const {error, login, user, isLoading} = useAuth();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -102,17 +103,21 @@ export default function SignIn() {
 
   // Handle Google OAuth token after redirect
   useEffect(() => {
+   // Check if we're in browser environment
+  if (typeof window !== 'undefined') {
     const token = searchParams.get('token');
     if (token) {
       // Save token to localStorage
-      localStorage.setItem('authToken', token);
+      storage.setItem('authToken', token);
       router.push('/dashboard');
-
     }
+  }
   }, [searchParams, router]);
 
   const handleGoogleLogin = () => {
+    if (typeof window !== 'undefined') {
     window.location.href = `${process.env.NEXT_PUBLIC_API_BASE_URL}/users/auth/google`;
+  }
   };
   
 
@@ -216,4 +221,12 @@ export default function SignIn() {
         </div>
     </div>
   )
+}
+
+export default function SignIn() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <SignInContent />
+    </Suspense>
+  );
 }
