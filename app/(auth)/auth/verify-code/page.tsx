@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/input-otp";
 import { publicAxios } from "@/components/axiosInstance/axios";
 import { useRouter } from "next/navigation";
+import { storage } from "@/lib/storage";
 
 
 interface FormData {
@@ -23,7 +24,7 @@ export default function VerifyCode() {
     const [formError, setFormError] = useState("");
 
     // otp sent email
-    const otpEmail = localStorage.getItem("otp-email");
+    const otpEmail = storage.getItem("otp-email");
 
     // submit
     const {
@@ -48,9 +49,9 @@ export default function VerifyCode() {
         const response = await publicAxios.post("/users/checkForgetPassOtp", updateData);
         if(response.data)
         {
-          localStorage.removeItem("otp-email");
-          localStorage.setItem("verified_otp", "true");
-          localStorage.setItem("otp_token", response.data.token);
+          storage.removeItem("otp-email");
+          storage.setItem("verified_otp", "true");
+          storage.setItem("otp_token", response.data.token);
           router.push('/auth/set-password');
         }
       } catch (error: any) {

@@ -1,6 +1,7 @@
 "use client";
  
 import { privateAxios, publicAxios } from "@/components/axiosInstance/axios";
+import { storage } from "@/lib/storage";
 import Link from "next/link";
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 
@@ -48,7 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const checkUser = async () => {
       setIsLoading(true); // Start loading
-      const token = localStorage.getItem("authToken");
+      const token = storage.getItem("authToken");
 
       if (token) {
         try {
@@ -60,11 +61,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           }
           else 
           {
-            localStorage.removeItem("authToken");
+            storage.removeItem("authToken");
           }
 
         } catch (error) {
-          // localStorage.removeItem("authToken");
+          // storage.removeItem("authToken");
           setUser(null);
           //console.log("Auth error", error);
         }
@@ -84,7 +85,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const response = await publicAxios.post("/users/login", credentials);
  
       const authorization = response.data;
-      localStorage.setItem("authToken", authorization.token);
+      storage.setItem("authToken", authorization.token);
       setUser(authorization?.user);
       return authorization;
       
@@ -114,7 +115,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const socket = useMemo(() => {
     return io(process.env.NEXT_PUBLIC_NOTIFICATION_BASE_URL, {
       extraHeaders: {
-        Auth: localStorage.getItem("authToken") || "",
+        Auth: storage.getItem("authToken") || "",
       },
     });
   }, []);
@@ -142,7 +143,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       // await privateAxios.post("/users/logout");
       setUser(null);
-      localStorage.removeItem("authToken");
+      storage.removeItem("authToken");
     } catch (error) {
       setError(`Error from logout: ${error} `);
     } finally {

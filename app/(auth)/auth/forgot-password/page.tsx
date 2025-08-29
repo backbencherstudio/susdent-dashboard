@@ -3,6 +3,7 @@
 import { publicAxios } from "@/components/axiosInstance/axios";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { storage } from "@/lib/storage";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -31,14 +32,17 @@ export default function ForgotPassword() {
   }, [errors.email?.message]);
 
  const onSubmit = async (data: formData) => {
-  localStorage.setItem("otp-email", data.email);
+  storage.setItem("otp-email", data.email);
 
   try {
     const response = await publicAxios.post("/users/forget_pass", data);
-    if(response.data)
-    {
-      router.push('/auth/verify-code');
-    }
+     if(response.data) {
+        // Only set storage after successful API call
+        if (typeof window !== 'undefined') {
+          storage.setItem("otp-email", data.email);
+        }
+        router.push('/auth/verify-code');
+      }
   } catch (error: any) {
     if (error.response) 
     {
