@@ -146,7 +146,7 @@ const columns: ColumnDef<Content>[] = [
       <img
         src={row.original.thumbnail}
         alt="Thumbnail"
-        className="thumbnail-class"
+        className="rounded-sm w-[57px] h-10 object-cover"
       />
     ),
   },
