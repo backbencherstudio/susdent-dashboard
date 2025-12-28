@@ -37,7 +37,7 @@ interface DataTableProps<TData, TValue> {
   open?: boolean;
 }
 
-export function   DataTable<TData, TValue>({
+export function DataTable<TData, TValue>({
   children,
   tableBar,
   tableTitle,
@@ -149,14 +149,16 @@ export function   DataTable<TData, TValue>({
           </Table>
         </div>
       </div>
-      <div className="my-6 pb-4">
-        <Paginations
-          page={page}
-          pageSize={pageSize}
-          total={total}
-          onPageChange={onPageChange}
-        />
-      </div>
+      {total && (
+        <div className="my-6 pb-4">
+          <Paginations
+            page={page}
+            pageSize={pageSize}
+            total={total}
+            onPageChange={onPageChange}
+          />
+        </div>
+      )}
     </div>
   );
 }
