@@ -8,7 +8,7 @@ import {
   DollarSign,
   CheckCircle2,
 } from "lucide-react";
-import CreatorInfoTabs from "./CreatorInfoTabs";
+import CreatorInfoTabs from "./tabs-content/CreatorInfoTabs";
 
 const VideoCreatorDetails = () => {
   const creator = {

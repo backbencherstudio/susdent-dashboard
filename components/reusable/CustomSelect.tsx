@@ -32,18 +32,18 @@ const CustomSelect = ({
     <Select onValueChange={onValueChange} defaultValue={defaultValue}>
       <SelectTrigger
         className={cn(
-          "bg-[#0D121E] border-gray-800 text-gray-300 hover:text-white transition-colors",
+          "bg-[#0D121E] border-[#E9E9EA] text-gray-300 hover:text-white transition-colors ",
           className
         )}
       >
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
-      <SelectContent className="bg-[#0D121E] border-gray-800 text-white  min-w-fit">
+      <SelectContent className="bg-[#0D121E] border-gray-800 text-white  min-w-fit ">
         {options.map((option) => (
           <SelectItem
             key={option.value}
             value={option.value}
-            className="focus:bg-[#311B52] focus:text-white cursor-pointer rounded-sm mb-1 last:mb-0"
+            className="focus:bg-[#311B52] focus:text-white cursor-pointer rounded-sm mb-1 last:mb-0 "
           >
             {option.label}
           </SelectItem>

@@ -63,9 +63,11 @@ export function DataTable<TData, TValue>({
         {/* table top bar */}
         {children && <div className="px-4 pt-4 mb-2">{children}</div>}
         {/* <div className="flex flex-col md:flex-row items-start md:items-center justify-between rounded-md px-6 pt-4 gap-3"> */}
-        {/* <h2 className="text-lg font-semibold text-white">
+       {
+        tableTitle && <h2 className="text-lg font-semibold text-white px-4 pt-4">
           {tableTitle}
-        </h2> */}
+        </h2> 
+       }
         <>
           {/* {addDataButton || (
             <div className="flex flex-col md:flex-row items-start md:items-center gap-2">
@@ -91,7 +93,7 @@ export function DataTable<TData, TValue>({
           )} */}
         </>
         {/* </div> */}
-        <div className="mx-4  overflow-hidden ">
+        <div className="mx-4 overflow-hidden ">
           <Table className="">
             <TableHeader className=" ">
               {table.getHeaderGroups().map((headerGroup) => (
@@ -103,14 +105,14 @@ export function DataTable<TData, TValue>({
                     return (
                       <TableHead
                         key={header.id}
-                        className="font-semibold  p-4 text-[#fff] "
+                        className="font-semibold  py-4 text-[#fff] first:pl-0 last:pr-0"
                       >
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
                       </TableHead>
                     );
                   })}
@@ -123,10 +125,11 @@ export function DataTable<TData, TValue>({
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
-                    className="text-[#A5A5AB] hover:bg-[#131824] border-[#1B202C]"
+                    className="text-[#A5A5AB] hover:bg-[#131824] border-[#1B202C] "
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell className="p-4 " key={cell.id}>
+                      // <TableCell className="p-4 align-top" key={cell.id}>
+                      <TableCell className="py-4 first:pl-0 last:pr-0" key={cell.id}>
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()

@@ -2,7 +2,6 @@ import React from "react";
 import {
   Dialog,
   DialogContent,
-  DialogHeader,
   DialogTitle,
   DialogTrigger,
   DialogClose,
@@ -13,63 +12,64 @@ export function VideoPreviewModal() {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <button className="text-sm text-purple-500 hover:underline">Open Preview</button>
+        <button className="text-sm text-[#7A24BC] hover:underline font-medium">Open Preview</button>
       </DialogTrigger>
-      
+
       {/* Set max-width to 719px as requested */}
-      <DialogContent className="lg:min-w-[719px] lg:max-w-[719px] bg-[#0D121E] border-gray-800 p-0 overflow-hidden outline-none">
-        
+      <DialogContent className="lg:min-w-[700px] lg:max-w-[700px] bg-white border-0 p-0 overflow-hidden outline-none shadow-xl sm:rounded-3xl">
+
         {/* Custom Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-800">
-          <DialogTitle className="text-white text-lg font-semibold">
+        <div className="flex items-center justify-between p-6 pb-0">
+          <DialogTitle className="text-[#0F172A] text-lg font-bold">
             Preview & Approve Video
           </DialogTitle>
-          <DialogClose className="text-gray-400 hover:text-white transition-colors">
+          {/* DialogClose is not rendered by default in some shadcn versions if pure content, but here we use custom close */}
+          {/* <DialogClose className="text-gray-500 hover:text-black transition-colors outline-none cursor-pointer">
             <X className="w-5 h-5" />
-          </DialogClose>
+          </DialogClose> */}
         </div>
 
         <div className="p-6 space-y-6">
           {/* Main Video/Image Banner */}
-          <div className="relative w-full aspect-video rounded-xl overflow-hidden border border-gray-800">
-            <img 
-              src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000&auto=format&fit=crop" 
-              alt="Video Preview" 
+          <div className="relative w-full aspect-video rounded-2xl overflow-hidden mt-2">
+            <img
+              src="https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1000&auto=format&fit=crop"
+              alt="Video Preview"
               className="w-full h-full object-cover"
             />
           </div>
 
           {/* Video Information */}
           <div className="space-y-2">
-            <h2 className="text-2xl font-bold text-white">What&apos;s My Name? ft. Drake</h2>
-            <p className="text-gray-400 text-sm">
+            <h2 className="text-xl font-bold text-[#0F172A]">What&apos;s My Name? ft. Drake</h2>
+            <p className="text-[#64748B] text-sm">
               Learn the basics of React Hooks in this comprehensive tutorial
             </p>
           </div>
 
           {/* Metadata Grid */}
-          <div className="grid grid-cols-3 gap-4 py-2">
-            <div>
-              <p className="text-xs text-gray-500 uppercase font-semibold">Creator</p>
-              <p className="text-white font-medium">Sarah Johnson</p>
+          <div className="grid grid-cols-3 gap-8 py-2">
+            <div className="space-y-1">
+              <p className="text-sm text-[#64748B]">Creator</p>
+              <p className="text-[#0F172A] font-semibold">Sarah Johnson</p>
             </div>
-            <div>
-              <p className="text-xs text-gray-500 uppercase font-semibold">Category</p>
-              <p className="text-white font-medium">Entertainment</p>
+            <div className="space-y-1">
+              <p className="text-sm text-[#64748B]">Category</p>
+              <p className="text-[#0F172A] font-semibold">Entertainment</p>
             </div>
-            <div>
-              <p className="text-xs text-gray-500 uppercase font-semibold">Duration</p>
-              <p className="text-white font-medium">1 Hour 8 Min</p>
+            <div className="space-y-1">
+              <p className="text-sm text-[#64748B]">Duration</p>
+              <p className="text-[#0F172A] font-semibold">1 Hour 8 Min</p>
             </div>
           </div>
 
           {/* Action Buttons */}
           <div className="flex gap-4 pt-2">
-            <button className="flex-1 flex items-center justify-center gap-2 py-3 rounded-lg border border-gray-800 bg-[#ececec] text-[#D4183D] font-semibold hover:bg-[#252b3a] transition-all">
+            <button className="flex-1 flex items-center justify-center gap-2 py-3 rounded-lg bg-[#F9FAFB] text-[#EF4444] font-semibold hover:bg-[#FEE2E2] transition-colors cursor-pointer">
               <CircleX className="w-5 h-5" />
               Reject
             </button>
-            <button className="flex-1 flex items-center justify-center gap-2 py-3 rounded-lg bg-[#7A24BC] text-white font-semibold hover:bg-[#6a1fa3] transition-all shadow-lg shadow-purple-900/20">
+            <button className="flex-1 flex items-center justify-center gap-2 py-3 rounded-lg bg-[#7A24BC] text-white font-semibold hover:bg-[#6a1fa3] transition-colors shadow-lg shadow-purple-900/20 cursor-pointer">
               <CircleCheck className="w-5 h-5" />
               Approve
             </button>

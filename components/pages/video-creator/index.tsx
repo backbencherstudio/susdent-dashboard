@@ -14,7 +14,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import CreatorInfoTabs from "./CreatorInfoTabs";
+import CreatorInfoTabs from "./tabs-content/CreatorInfoTabs";
+import CustomSelect from "@/components/reusable/CustomSelect";
 
 // Interface updated to match the new image columns
 interface CreatorManagement {
@@ -152,7 +153,7 @@ export default function CreatorManagementTable() {
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-semibold">Permission Request</h2>
         <div className="flex items-center justify-center gap-4">
-          <Select>
+          {/* <Select>
             <SelectTrigger className="w-[100px] bg-[#1C212D] border-gray-700 rounded px-4">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
@@ -164,21 +165,41 @@ export default function CreatorManagementTable() {
                 <SelectItem value="rejected">Rejected</SelectItem>
               </SelectGroup>
             </SelectContent>
-          </Select>
+          </Select> */}
 
-          <Select>
-            <SelectTrigger className="w-[110px] bg-[#1C212D] border-gray-700 rounded px-4">
-              <SelectValue placeholder="Plans" />
-            </SelectTrigger>
-            <SelectContent className="border border-gray-700 bg-[#0D121E] text-white">
-              <SelectGroup>
-                <SelectItem value="all">All Plans</SelectItem>
-                <SelectItem value="pending">Basic</SelectItem>
-                <SelectItem value="approved">Family</SelectItem>
-                <SelectItem value="rejected">Most Popular</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+          <CustomSelect placeholder="Status" defaultValue="all" options={[
+            {
+              label: "All Status",
+              value: "all",
+            },
+            {
+              label: "Pending",
+              value: "pending",
+            }, {
+              label: "Approved",
+              value: "approved",
+            }, {
+              label: "Rejected",
+              value: "rejected",
+            }]} />
+
+          <CustomSelect placeholder="Plans" defaultValue="all" options={[
+            {
+              label: "All Plans",
+              value: "all",
+            },
+            {
+              label: "Basic",
+              value: "basic",
+            }, {
+              label: "Family",
+              value: "family",
+            }, {
+              label: "Most Popular",
+              value: "most-popular",
+            }
+          ]} />
+
         </div>
       </div>
 
@@ -186,8 +207,8 @@ export default function CreatorManagementTable() {
         <DataTable columns={columns} data={creatorData} />
       </div>
 
-    
-   
+
+
     </>
   );
 }
