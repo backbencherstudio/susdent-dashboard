@@ -80,11 +80,7 @@ const menuItems = [
     icon: <Setting className="w-[18px] h-[18px]" />,
     label: "Setting",
   },
-  {
-    href: "/dashboard/help-support",
-    icon: <MessageCircleQuestionMark className="w-[18px] h-[18px]" />,
-    label: "Help & Support",
-  },
+  
 ];
 
 const bottomMenu = [

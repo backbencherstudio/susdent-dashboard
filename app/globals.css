@@ -232,6 +232,10 @@ body {
   @apply flex items-center justify-center gap-1 rounded py-2 px-3  text-white font-medium text-sm leading-[100%] cursor-pointer 
 }
 
+.action-btn1{
+  @apply flex items-center gap-1 px-3 py-1.5 rounded text-white text-xs font-medium  transition-colors leading-[100%] cursor-pointer 
+}
+
 /* Target the scrollbar itself */
 ::-webkit-scrollbar {
   width: 8px;  /* Width for vertical scrollbars */

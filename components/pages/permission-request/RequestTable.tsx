@@ -13,6 +13,7 @@ import {
 import { DataTable } from "@/components/reusable/data-table";
 import { CircleCheck, CircleX, Info } from "lucide-react"; // Changed icons to match context better
 import Link from "next/link";
+import CustomSelect from "@/components/reusable/CustomSelect";
 
 interface PermissionRequest {
   id: string;
@@ -80,7 +81,7 @@ const permissionRequest: PermissionRequest[] = [
     plan: "Most Popular",
     date: "14 Dec 2025",
     method: "PayPal",
-    status: "Pending",
+    status: "approved",
   },
 ];
 
@@ -144,7 +145,7 @@ const columns: ColumnDef<PermissionRequest>[] = [
     accessorKey: "status",
     header: "Status",
     cell: ({ row }) => (
-      <span className="text-gray-400">{row.original.status}</span>
+      <span className="text-gray-400">{row.original.status === "Pending" ? <p className="text-white">Pending</p> : row.original.status === "approved" ? <p className="text-green-500">Approved</p> : <p className="text-[#D4183D]">Rejected</p>}</span>
     ),
   },
   {
@@ -152,23 +153,21 @@ const columns: ColumnDef<PermissionRequest>[] = [
     header: "Action",
     cell: ({ row }) => (
       <>
-       
-
         {row.original.status !== "Pending" ? (
           <p>Action not allowed for this status</p>
         ) : (
           <div className="flex items-center gap-2">
-            <button className="flex items-center gap-1 px-3 py-1.5 rounded bg-[#7A24BC] text-white text-xs font-medium hover:bg-[#6a1fa3] transition-colors">
+            <button className="action-btn1 bg-[#7A24BC] hover:bg-[#6a1fa3] ">
               <CircleCheck className="w-3.5 h-3.5" />
               <span>Approve</span>
             </button>
-            <button className="flex items-center gap-1 px-3 py-1.5 rounded bg-[#D4183D] text-white text-xs font-medium hover:bg-[#b81535] transition-colors">
+            <button className="action-btn1 bg-[#D4183D] hover:bg-[#b81535] ">
               <CircleX className="w-3.5 h-3.5" />
               <span>Reject</span>
             </button>
             <Link
               href="./permission-requests/1234"
-              className="flex items-center gap-1 px-3 py-1.5 rounded bg-[#1C212D] text-white text-xs font-medium border border-gray-700 hover:bg-[#2a3142] transition-colors"
+              className="action-btn1 bg-[#1C212D] hover:bg-[#2a3142]"
             >
               <Info className="w-3.5 h-3.5" />
               <span>Details</span>
@@ -186,19 +185,20 @@ export default function RequestTable() {
       {/* header */}
       <div className="flex items-center justify-between">
         <h2 className="text-xl font-semibold">Permission Request</h2>
-        <Select>
-          <SelectTrigger className="w-[140px] bg-[#1C212D] border-gray-700 rounded px-4">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent className="border border-gray-700 bg-[#0D121E] text-white">
-            <SelectGroup>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="pending">Pending</SelectItem>
-              <SelectItem value="approved">Approved</SelectItem>
-              <SelectItem value="rejected">Rejected</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
+
+        <CustomSelect
+          options={[
+            { label: "All", value: "all" },
+            { label: "Pending", value: "pending" },
+            { label: "Approve", value: "approve" },
+            { label: "Rejected", value: "rejected" },
+          ]}
+          placeholder="Status"
+          className={"min-w-[107px]"}
+          defaultValue="all"
+        />
+
+
       </div>
 
       {/* table */}
