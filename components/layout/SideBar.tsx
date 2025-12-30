@@ -1,10 +1,10 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { FileText } from "lucide-react";
+import { FileText, ChevronDown, ChevronUp } from "lucide-react";
 import logo from "@/public/logo.svg";
 
 import Dashboard from "@/components/icons/Dashboard";
@@ -42,7 +42,17 @@ const menuItems = [
     {
         href: "/dashboard/subscriptions",
         icon: <Subscription className="w-[18px] h-[18px]" />,
-        label: "Subscription",
+        label: "Subscriptions",
+        subItems: [
+            {
+                href: "/dashboard/subscriptions/viewer",
+                label: "Viewer",
+            },
+            {
+                href: "/dashboard/subscriptions/uploader",
+                label: "Uploader",
+            },
+        ],
     },
 
     {
@@ -83,6 +93,11 @@ interface SideBarProps {
 export default function SideBar({ sidebarOpen, setSidebarOpen }: SideBarProps) {
     const pathname = usePathname();
     const { logout } = useAuth();
+    const [expandedMenu, setExpandedMenu] = useState<string | null>(null);
+
+    const toggleSubmenu = (label: string) => {
+        setExpandedMenu((prev) => (prev === label ? null : label));
+    };
 
     const handleLogout = () => {
         logout();
@@ -115,19 +130,67 @@ export default function SideBar({ sidebarOpen, setSidebarOpen }: SideBarProps) {
                         }
                         return pathname.startsWith(item.href);
                     })();
+
+                    // @ts-ignore
+                    const hasSubItems = item.subItems && item.subItems.length > 0;
+                    const isExpanded = expandedMenu === item.label;
+
                     return (
-                        <div className="mb-2" key={index}>
-                            <Link
-                                href={item.href}
-                                onClick={() => setSidebarOpen(false)}
-                                className={`flex items-center text-base font-medium px-4 py-3 rounded-md gap-1 ${isActive
-                                    ? "bg-[#7A24BC] primary-text font-medium"
-                                    : "text-[#A5A5AB] hover:bg-[#7A24BC]/50"
-                                    }`}
-                            >
-                                {item.icon}
-                                {item.label}
-                            </Link>
+                        <div className="mb-2 " key={index}>
+                            {hasSubItems ? (
+                                <div>
+                                    <button
+                                        onClick={() => toggleSubmenu(item.label)}
+                                        className={`w-full flex items-center justify-between text-base font-medium px-4 py-3 rounded-md transition-colors ${isActive || isExpanded
+                                            ? "bg-[#7A24BC] text-white"
+                                            : "text-[#A5A5AB] hover:bg-[#7A24BC]/50"
+                                            }`}
+                                    >
+                                        <div className="flex items-center gap-1">
+                                            {item.icon}
+                                            {item.label}
+                                        </div>
+                                        <ChevronDown
+                                            className={`w-4 h-4 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""
+                                                }`}
+                                        />
+                                    </button>
+
+                                    {isExpanded && (
+                                        <div className="mt-1 ml-4 space-y-1">
+                                            {/* @ts-ignore */}
+                                            {item.subItems.map((subItem: any, subIndex: number) => {
+                                                const isSubActive = pathname === subItem.href;
+                                                return (
+                                                    <Link
+                                                        key={subIndex}
+                                                        href={subItem.href}
+                                                        onClick={() => setSidebarOpen(false)}
+                                                        className={`block px-4 py-2 text-sm rounded-md transition-colors ${isSubActive
+                                                            ? "text-[#7A24BC] font-medium"
+                                                            : "text-[#A5A5AB] hover:text-white"
+                                                            }`}
+                                                    >
+                                                        {subItem.label}
+                                                    </Link>
+                                                );
+                                            })}
+                                        </div>
+                                    )}
+                                </div>
+                            ) : (
+                                <Link
+                                    href={item.href}
+                                    onClick={() => setSidebarOpen(false)}
+                                    className={`flex items-center text-base font-medium px-4 py-3 rounded-md gap-1  ${isActive
+                                        ? "bg-[#7A24BC] primary-text font-medium"
+                                        : "text-[#A5A5AB] hover:bg-[#7A24BC]/50"
+                                        }`}
+                                >
+                                    {item.icon}
+                                    {item.label}
+                                </Link>
+                            )}
                         </div>
                     );
                 })}

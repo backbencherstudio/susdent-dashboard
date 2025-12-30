@@ -2,6 +2,7 @@
 import { privateAxios } from "@/components/axiosInstance/axios";
 import SubscriptionTable from "@/components/pages/subscription/SubscriptionTable";
 import CustomSelect from "@/components/reusable/CustomSelect";
+import { STATUS_OPTIONS, PLAN_OPTIONS, PAYMENT_OPTIONS } from "@/components/pages/subscription/constants";
 
 import StatsCard from "@/components/reusable/StatsCard";
 import { useQuery } from "@tanstack/react-query";
@@ -77,7 +78,7 @@ export default function Subscription() {
             options={STATUS_OPTIONS}
             placeholder="Status"
             className="w-[107px]"
-            // defaultValue="active"
+          // defaultValue="active"
           />
 
           {/* 2. Plan Dropdown */}
@@ -85,7 +86,7 @@ export default function Subscription() {
             options={PLAN_OPTIONS}
             placeholder="Select Plan"
             className="w-[160px]"
-            // defaultValue="family"
+          // defaultValue="family"
           />
 
           {/* 3. Payment Method Dropdown */}
@@ -93,7 +94,7 @@ export default function Subscription() {
             options={PAYMENT_OPTIONS}
             placeholder="Payment Method"
             className="w-[180px]"
-            // defaultValue="stripe"
+          // defaultValue="stripe"
           />
         </div>
         <SubscriptionTable />
@@ -102,19 +103,4 @@ export default function Subscription() {
   );
 }
 
-export const STATUS_OPTIONS = [
-  { label: "Active", value: "active" },
-  { label: "Expired", value: "expired" },
-];
 
-export const PLAN_OPTIONS = [
-  { label: "Most Popular", value: "popular" },
-  { label: "Family", value: "family" },
-  { label: "Basic", value: "basic" },
-];
-
-export const PAYMENT_OPTIONS = [
-  { label: "Credit Card", value: "credit_card" },
-  { label: "Stripe", value: "stripe" },
-  { label: "PayPal", value: "paypal" },
-];

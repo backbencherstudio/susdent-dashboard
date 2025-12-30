@@ -20,6 +20,15 @@ type AuthUser = {
   role: Role;
   email: string;
   name?: string;
+  date_of_birth?: string | Date;
+  imageUrl?: string;
+  address?: string;
+  phone_number?: string;
+  country?: string;
+  state?: string;
+  city?: string;
+  postal_code?: string;
+  bio?: string;
 };
 
 interface AuthContextType {
@@ -36,8 +45,8 @@ const defaultAuthContext: AuthContextType = {
   isLoading: true,
   isNotification: null,
   error: null,
-  login: async () => {},
-  logout: async () => {},
+  login: async () => { },
+  logout: async () => { },
 };
 
 const AuthContext = createContext<AuthContextType>(defaultAuthContext);
@@ -121,7 +130,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       if (IS_MOCK) {
         const ok =
           credentials.email.trim().toLowerCase() ===
-            MOCK_EMAIL.trim().toLowerCase() &&
+          MOCK_EMAIL.trim().toLowerCase() &&
           credentials.password === MOCK_PASSWORD;
 
         if (!ok) {
@@ -171,8 +180,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const socket = useMemo(() => {
     if (IS_MOCK) {
       return {
-        on: (_: any, __?: any) => {},
-        off: (_: any, __?: any) => {},
+        on: (_: any, __?: any) => { },
+        off: (_: any, __?: any) => { },
       } as any;
     }
 
