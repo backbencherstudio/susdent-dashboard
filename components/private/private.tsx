@@ -9,6 +9,9 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   //console.log("From private",user, isLoading);
 
+ 
+
+
   // admin validation
   useEffect(() => {
     // console.log(user);

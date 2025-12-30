@@ -226,3 +226,52 @@ body {
 .primary-btn {
   @apply flex justify-center items-center gap-2.5 bg-[#7A24BC] px-5 py-2.5 rounded-lg cursor-pointer hover:bg-[#9B2BB9];
 }
+
+
+.action-btn{
+  @apply flex items-center justify-center gap-1 rounded py-2 px-3  text-white font-medium text-sm leading-[100%] cursor-pointer 
+}
+
+.action-btn1{
+  @apply flex items-center gap-1 px-3 py-1.5 rounded text-white text-xs font-medium  transition-colors leading-[100%] cursor-pointer 
+}
+
+/* Target the scrollbar itself */
+::-webkit-scrollbar {
+  width: 8px;  /* Width for vertical scrollbars */
+  height: 8px; /* Height for horizontal scrollbars (like in your image) */
+}
+
+/* The background of the scrollbar (track) */
+::-webkit-scrollbar-track {
+  background: #0f172a; /* Match your dashboard's dark background */
+  border-radius: 10px;
+}
+
+/* The draggable part (thumb) */
+::-webkit-scrollbar-thumb {
+  background: #334155; /* A subtle grey-blue that fits dark mode */
+  border-radius: 10px;
+  border: 2px solid #0f172a; /* Creates padding effect around the thumb */
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #475569; /* Slightly lighter when interacting */
+}
+
+/* For Firefox (Firefox uses different properties) */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #334155 #0f172a;
+}
+
+
+/* Add to your global CSS */
+.select-chevron {
+  transition: transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.select-chevron-open {
+  transform: rotate(180deg);
+}

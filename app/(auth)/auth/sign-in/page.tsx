@@ -35,13 +35,6 @@ function SignInContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // if user already login redirect to dashboard
-  if(!isLoading && user)
-  {  
-    router.push("/dashboard");
-  }
-
-
   const [type, setType] = React.useState<'password' | 'text'>('password');
 
   const [savedEmail, setSavedEmail] = useState("");
@@ -68,6 +61,13 @@ function SignInContent() {
       setValue("remember_me", true);
     }
   }, [setValue]);
+
+  // Redirect to dashboard if user already logged in
+  useEffect(() => {
+    if (!isLoading && user) {
+      router.push("/dashboard");
+    }
+  }, [isLoading, user, router]);
 
   const onSubmit = async (data: formData) => {
     try {

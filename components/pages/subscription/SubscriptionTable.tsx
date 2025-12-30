@@ -134,6 +134,11 @@ const subscriptionList: SubscriptionDetail[] = [
 
 const columns: ColumnDef<SubscriptionDetail>[] = [
   {
+    accessorKey: "id",
+    header: "User ID",
+    cell: ({ row }) => <span className="">{row.original.id}</span>,
+  },
+  {
     accessorKey: "name",
     header: "Name",
     cell: ({ row }) => <span className="">{row.original.name}</span>,
@@ -176,17 +181,17 @@ const columns: ColumnDef<SubscriptionDetail>[] = [
           return( row.original.status === "Active" ? <span>{row.original.status}</span> : <span className="text-[#E73021]">{row.original.status} </span>)
         }
   },
-  {
-    id: "actions",
-    header: "Actions",
-    cell: ({ row }) => (
-      <div className="flex gap-4">
-        <Link  className="border border-[#A5A5AB] px-2 py-1 rounded-[2px]" href="#">
-           Details  
-        </Link>
-      </div>
-    ),
-  },
+  // {
+  //   id: "actions",
+  //   header: "Actions",
+  //   cell: ({ row }) => (
+  //     <div className="flex gap-4">
+  //       <Link  className="border border-[#A5A5AB] px-2 py-1 rounded-[2px]" href="#">
+  //          Details  
+  //       </Link>
+  //     </div>
+  //   ),
+  // },
 ];
 
 export default function SubscriptionTable() {
