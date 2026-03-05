@@ -1,11 +1,19 @@
 import React, { ReactNode } from "react";
 import ClientLayout from "./ClientLayout";
 import PrivateRoute from "@/components/private/private";
+import toast, { Toaster } from 'react-hot-toast';
+
 
 export default function DashboardLayout({ children }: { children: ReactNode }) {
-  return <>
-    <ClientLayout>{children}</ClientLayout>
-  </>
- 
-  ;
+  return (
+
+
+    <>
+      <Toaster
+        position="top-center"
+        reverseOrder={false}
+      />
+      <ClientLayout>{children}</ClientLayout>
+    </>
+  );
 }

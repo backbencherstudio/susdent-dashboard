@@ -28,6 +28,17 @@ const menuItems = [
         href: "/dashboard/content-management",
         icon: <Content className="w-[18px] h-[18px]" />,
         label: "Content Management",
+
+        subItems: [
+            {
+                href: "/dashboard/content-management/viewer",
+                label: "Viewer",
+            },
+            {
+                href: "/dashboard/content-management/uploader",
+                label: "Uploader",
+            },
+        ],
     },
     {
         href: "/dashboard/categories",
@@ -105,7 +116,7 @@ export default function SideBar({ sidebarOpen, setSidebarOpen }: SideBarProps) {
 
     return (
         <div
-            className={`fixed z-30 h-screen w-64 transform bg-[#131824]  transition-transform duration-300 ease-in-out text-white ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
+            className={`fixed z-30 h-screen w-68  transform bg-[#131824]  transition-transform duration-300 ease-in-out text-white ${sidebarOpen ? "translate-x-0" : "-translate-x-full"
                 } lg:translate-x-0`}
         >
             {/* Logo */}
