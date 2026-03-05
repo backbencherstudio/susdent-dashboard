@@ -208,13 +208,15 @@ export default function ContentTable() {
     queryFn: fetchContent,
   });
 
-  // console.log(data);
+  console.log(data);
 
   const [page, setPage] = useState(1);
   const pageSize = 5;
 
   const total = data?.length;
-  const paginatedData = data?.slice((page - 1) * pageSize, page * pageSize);
+
+
+  const paginatedData = data?.contents?.slice((page - 1) * pageSize, page * pageSize);
 
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>error</p>;

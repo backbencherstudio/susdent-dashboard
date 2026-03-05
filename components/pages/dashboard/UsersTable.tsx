@@ -1,6 +1,8 @@
 import { DataTable } from "@/components/reusable/data-table";
+import { useQuery } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import React, { useState } from "react";
+import { privateAxios } from "@/components/axiosInstance/axios";
 
 interface UserDetail {
   id: number;
@@ -122,6 +124,18 @@ const columns: ColumnDef<UserDetail>[] = [
 ];
 
 export default function UsersTable() {
+
+
+  const { data } = useQuery({
+    queryKey: ["usersData"],
+    queryFn: async () => {
+      const res = await privateAxios.get("/admin/dashboard/recent-users");
+      return res.data?.recent_users ?? [];
+    },
+  });
+
+  console.log( "users data", data ?? "no data");
+
   // Pagination state
   const [page, setPage] = useState(1);
   const pageSize = 5;

@@ -5,6 +5,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { type ChartConfig, ChartContainer, ChartTooltip } from "@/components/ui/chart"
 import { Button } from "@/components/ui/button"
 import { Calendar, ChevronDown, TrendingUp } from "lucide-react"
+import { useQuery } from "@tanstack/react-query"
+import { privateAxios } from "@/components/axiosInstance/axios"
 
 const chartData = [
   { month: "Jan", revenue: 10, expenses: 15 },
@@ -40,7 +42,15 @@ const CustomDot = (props: any) => {
   return null
 }
 
-export function RevenueChart() {
+export function   RevenueChart() {
+  const { data } = useQuery({
+    queryKey: ["totalRevenueData"],
+    queryFn: async () => {
+      const res = await privateAxios.get("/admin/dashboard/total-revenue");
+      return res.data?.total_revenue ?? [];
+    },
+  });
+
   return (
     <Card className="w-full bg-[#131824] border-slate-800">
       <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-8">

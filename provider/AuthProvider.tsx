@@ -176,32 +176,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  // ✅ Socket only when NOT mock
-  const socket = useMemo(() => {
-    if (IS_MOCK) {
-      return {
-        on: (_: any, __?: any) => { },
-        off: (_: any, __?: any) => { },
-      } as any;
-    }
+  // // ✅ Socket only when NOT mock
+  // const socket = useMemo(() => {
+  //   if (IS_MOCK) {
+  //     return {
+  //       on: (_: any, __?: any) => { },
+  //       off: (_: any, __?: any) => { },
+  //     } as any;
+  //   }
 
-    return io(process.env.NEXT_PUBLIC_NOTIFICATION_BASE_URL as string, {
-      extraHeaders: {
-        Auth: storage.getItem("authToken") || "",
-      },
-    });
-  }, [IS_MOCK]);
+  //   return io(process.env.NEXT_PUBLIC_NOTIFICATION_BASE_URL as string, {
+  //     extraHeaders: {
+  //       Auth: storage.getItem("authToken") || "",
+  //     },
+  //   });
+  // }, [IS_MOCK]);
 
-  const handleNotification = useCallback((payload: any) => {
-    setIsNotification(payload);
-  }, []);
+  // const handleNotification = useCallback((payload: any) => {
+  //   setIsNotification(payload);
+  // }, []);
 
-  useEffect(() => {
-    socket.on("notification", handleNotification);
-    return () => {
-      socket.off("notification", handleNotification);
-    };
-  }, [socket, handleNotification]);
+  // useEffect(() => {
+  //   socket.on("notification", handleNotification);
+  //   return () => {
+  //     socket.off("notification", handleNotification);
+  //   };
+  // }, [socket, handleNotification]);
 
   const logout = async () => {
     setIsLoading(true);
