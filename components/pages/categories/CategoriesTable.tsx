@@ -23,27 +23,6 @@ export type Category = {
   updated_at: string;
 };
 
-// const fakeCategories: Category[] = [
-//   {
-//     categoryName: "Action",
-//     description: "Movies with a lot of action and stunts",
-//     content: 248,
-//     status: "Active",
-//   },
-//   {
-//     categoryName: "Comedy",
-//     description: "Funny movies to make you laugh",
-//     content: 176,
-//     status: "Active",
-//   },
-//   {
-//     categoryName: "Drama",
-//     description: "Movies with a lot of action and stunts",
-//     content: 215,
-//     status: "Active",
-//   },
-// ];
-
 const columns: ColumnDef<Category>[] = [
   {
     accessorKey: "id",
@@ -96,20 +75,27 @@ export const fetchCategoris = async () => {
 export default function CategoriesTable() {
   // fetch categories
   const {
-    data: categories,
+    data: categories  = [],
     isLoading,
     error,
   } = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
       const response = await privateAxios.get("/admin/categories/categories");
-      return response.data.data;
+      return response.data.data ?? [];
     },
-    // queryFn: () => privateAxios.get("/admin/categories/categories")
+
+    // select: (data) => data.data.data,
+
   });
 
   const [page, setPage] = useState(1);
   const pageSize = 5;
+
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+
 
   const total = categories?.length;
   const paginatedData = categories?.slice(
@@ -117,11 +103,8 @@ export default function CategoriesTable() {
     page * pageSize
   );
 
-  if (isLoading) return <div>Loading...</div>;
+ 
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
 
   console.log("Category", categories);
   return (

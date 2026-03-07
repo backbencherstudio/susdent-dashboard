@@ -8,18 +8,19 @@ import Payments from "@/components/pages/users/Payments";
 import UserDetTop from "@/components/pages/users/UserDetTop";
 import { useQuery } from "@tanstack/react-query";
 import { privateAxios } from "@/components/axiosInstance/axios";
+import { useParams } from "next/navigation";
 
-// interface UserDetailsProps {
-//   id: string;
-// }
 
-export default function UserDetails({ params }: { params: any }) {
-  const id = params?.id;
+export default function UserDetails() {
+
+  const { id } = useParams();
+
+
   const { data: userDet, isLoading } = useQuery({
     queryKey: ["userDet", id],
     queryFn: async () => {
-      const res = await privateAxios.get(`/admin/user/users/${id}`);
-      return res.data;
+      const res = await privateAxios.get(`/admin/user/${id}`);
+      return res.data.user;
     },
   });
 
@@ -32,6 +33,8 @@ export default function UserDetails({ params }: { params: any }) {
   const [activeTab, setActiveTab] = useState(tabs[0].value);
 
   if (isLoading) return <p>Loading...</p>;
+
+  console.log(userDet);
 
   return (
     <>

@@ -8,20 +8,33 @@ import Payments from "@/components/pages/users/Payments";
 import UserDetTop from "@/components/pages/users/UserDetTop";
 import { useQuery } from "@tanstack/react-query";
 import { privateAxios } from "@/components/axiosInstance/axios";
+import Loader from "@/components/reusable/Loader";
+import { error } from "console";
+import { useParams } from "next/navigation";
 
 // interface UserDetailsProps {
 //   id: string;
 // }
 
-export default function UserDetails({ params }: { params: any }) {
-  const id = params?.id;
-  const { data: userDet, isLoading } = useQuery({
+export default function UserDetails() {
+
+  
+  
+  // console.log(id);
+
+  const id = "cmm1f55zl00yjl0d6sob4dk58";
+ 
+
+  const { data: userDet, isLoading, error } = useQuery({
     queryKey: ["userDet", id],
     queryFn: async () => {
       const res = await privateAxios.get(`/admin/user/users/${id}`);
       return res.data;
     },
   });
+
+  if (isLoading) return <Loader />;
+  if (error) return <div>Error: {error.message}</div>;  
 
   const tabs = [
     { name: "Personal Info", value: "personal-info" },
