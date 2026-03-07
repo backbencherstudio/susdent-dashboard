@@ -4,6 +4,7 @@ import React from "react";
 import { SeriesUploadForm } from "./SeriesUploadForm";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import toast from "react-hot-toast";
+import { EpisodesUploadForm } from "./EpisodesUploadForm";
 
 export default function AddSeriesPageContent() {
   return (
@@ -13,8 +14,8 @@ export default function AddSeriesPageContent() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-lg font-medium text-white">Add Series</h1>
 
-
-        <button onClick={() => toast.success("Hello World")}>Show toast</button>
+{/* 
+        <button onClick={() => toast.success("Hello World")}>Show toast</button> */}
 
         <TabsList className="flex bg-transparent p-0">
           <TabsTrigger
@@ -39,7 +40,9 @@ export default function AddSeriesPageContent() {
       </TabsContent>
 
       <TabsContent value="episodes">
-        <div>Episodes Upload</div>
+        <div>
+          <EpisodesUploadForm />
+        </div>
       </TabsContent>
     </Tabs>
   );

@@ -70,7 +70,7 @@ export default function LatestUploadsTable({
 }) {
   return (
     <div className="rounded-lg mt-4">
-      <DataTable columns={columns} data={data ?? []}>
+      <DataTable columns={columns} data={data.slice(0, 4) ?? []}>
         <div className="flex items-center justify-between">
           <h2 className="text-white text-base font-medium leading-[160%]">
             Latest Uploads

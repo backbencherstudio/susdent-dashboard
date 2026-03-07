@@ -12,27 +12,38 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Upload } from "lucide-react";
+import { Upload, X } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { privateAxios } from "@/components/axiosInstance/axios";
 import { fetchCategoris } from "../../categories/CategoriesTable";
-// import { toast } from "sonner";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
+
+const GENRE_OPTIONS = [
+  "comedy",
+  "drama",
+  "action",
+  "horror",
+  "romance",
+  "sci_fi",
+  "thriller",
+  "mystery",
+];
 
 type Inputs = {
   title: string;
-
-  genre: string;
+  genres: string[]; // multi-select
   description: string;
   contentCategory: string;
   contentType: string;
+  is_premium: boolean;
   file: File | null;
   thumbnailImg: File | null;
 };
 
 export function SeriesUploadForm() {
   const [dragActive, setDragActive] = useState(false);
+  const [selectedGenres, setSelectedGenres] = useState<string[]>([]);
   const queryClient = useQueryClient();
 
   const {
@@ -44,50 +55,51 @@ export function SeriesUploadForm() {
   } = useForm<Inputs>({
     defaultValues: {
       title: "",
-      genre: "comedy",
+      genres: [],
       description: "",
-      contentCategory: "movie",
-      contentType: "published",
+      contentCategory: "",
+      contentType: "series",
+      is_premium: false,
       file: null,
       thumbnailImg: null,
     },
   });
 
-  const genre = watch("genre");
   const contentCategory = watch("contentCategory");
   const contentType = watch("contentType");
+  const isPremium = watch("is_premium");
   const thumbnail = watch("thumbnailImg");
   const vidFile = watch("file");
+
+  // Genre toggle handler
+  const toggleGenre = (genre: string) => {
+    const updated = selectedGenres.includes(genre)
+      ? selectedGenres.filter((g) => g !== genre)
+      : [...selectedGenres, genre];
+    setSelectedGenres(updated);
+    setValue("genres", updated, { shouldValidate: true, shouldDirty: true });
+  };
 
   // send to the server
   const uploadContent = useMutation({
     mutationFn: async (data: Inputs) => {
       try {
         const formData = new FormData();
-        // Append file data
+
         if (data.file) formData.append("file", data.file);
         if (data.thumbnailImg) formData.append("thumbnail", data.thumbnailImg);
 
-        // Append other fields as regular form data
         formData.append("title", data.title);
         formData.append("description", data.description);
-        formData.append("genre", data.genre);
+        // Join genres as comma-separated string to match the API format shown in image
+        formData.append("genre", data.genres.join(", "));
         formData.append("category_id", data.contentCategory);
-        formData.append("type", data.contentType);
+        formData.append("content_type", data.contentType); // updated field name
+        formData.append("is_premium", String(data.is_premium)); // new field
 
-        console.log("FormData Contents:");
-        formData.forEach((value, key) => {
-          console.log(`${key}: ${value}`);
-        });
-
-        // You can replace this with your actual API endpoint
         const response = await privateAxios.post(`/uploads/video`, formData, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: { "Content-Type": "multipart/form-data" },
         });
-
-        console.log(response.data);
 
         if (!response.data.success) {
           const errorMessage = response.data.message || "Error uploading series";
@@ -103,17 +115,14 @@ export function SeriesUploadForm() {
       }
     },
   });
+
   const onSubmit: SubmitHandler<Inputs> = (data) => {
-    console.log(data);
     uploadContent.mutate(data, {
       onSuccess: () => {
-        console.log("Upload done");
         toast.success("Series Uploaded Successfully!");
-        // Optional: Reset form or redirect
       },
       onError: (error: Error) => {
         toast.error(error.message || "Failed to upload content");
-        console.log("Error form update content", error);
       },
     });
   };
@@ -132,43 +141,40 @@ export function SeriesUploadForm() {
     setDragActive(false);
     const file = e.dataTransfer?.files?.[0];
     if (file) {
-      setValue("thumbnailImg", file, {
-        shouldValidate: true,
-        shouldDirty: true,
-      });
+      setValue("thumbnailImg", file, { shouldValidate: true, shouldDirty: true });
     }
   };
 
-  // File picker handler
   const handleFilePick: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const file = e.target.files?.[0] ?? null;
-
     setValue("thumbnailImg", file, { shouldValidate: true, shouldDirty: true });
   };
+
   const handleVideoPick: React.ChangeEventHandler<HTMLInputElement> = (e) => {
     const vidFile = e.target.files?.[0] ?? null;
-
     setValue("file", vidFile, { shouldValidate: true, shouldDirty: true });
   };
 
-  const { data: categoriesList, isLoading: categoriesLoading } = useQuery({
+  const { data: categoriesList } = useQuery({
     queryKey: ["categories"],
     queryFn: fetchCategoris,
   });
 
   return (
     <div>
+      <Toaster />
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="grid grid-cols-1 lg:grid-cols-3 lg:gap-8 sm:h-[580px]"
       >
         {/* Upload Area */}
-        <div className="space-y-6 overflow-hidden  h-76 md:h-[340px] lg:h-full">
+        <div className="space-y-6 overflow-hidden h-76 md:h-[340px] lg:h-full">
           <div
-            className={`border border-dashed flex flex-col items-center justify-between h-full rounded-lg p-8 text-center transition-colors bg-[#131824] ${dragActive
-              ? "border-purple-500 bg-purple-500/10"
-              : "border-slate-700 hover:border-slate-600"
-              }`}
+            className={`border border-dashed flex flex-col items-center justify-between h-full rounded-lg p-8 text-center transition-colors bg-[#131824] ${
+              dragActive
+                ? "border-purple-500 bg-purple-500/10"
+                : "border-slate-700 hover:border-slate-600"
+            }`}
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
             onDragOver={handleDrag}
@@ -245,40 +251,41 @@ export function SeriesUploadForm() {
               )}
             </div>
 
-            {/* Genre (Select bridged via hidden input) */}
+            {/* Content Type */}
             <div className="space-y-3 w-full">
               <label className="text-base font-medium text-slate-300 block">
-                Genre
+                Content Type
               </label>
               <Select
-                value={genre}
+                value={contentType}
                 onValueChange={(val) =>
-                  setValue("genre", val, {
+                  setValue("contentType", val, {
                     shouldValidate: true,
                     shouldDirty: true,
                   })
                 }
               >
+
+
                 <SelectTrigger className="bg-[#131824] border-[#1B202C] rounded text-slate-100 w-full">
-                  <SelectValue placeholder="Select genre" />
+                  <SelectValue placeholder="Select type" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#131824] border-slate-700 text-white">
-                  <SelectItem value="comedy">Comedy</SelectItem>
-                  <SelectItem value="drama">Drama</SelectItem>
-                  <SelectItem value="action">Action</SelectItem>
-                  <SelectItem value="horror">Horror</SelectItem>
-                  <SelectItem value="romance">Romance</SelectItem>
+                  <SelectItem value="series">Series</SelectItem>
+                  {/* <SelectItem value="movie">Movie</SelectItem>
+                  <SelectItem value="episode">Episode</SelectItem>
+                  <SelectItem value="trailer">Trailer</SelectItem>
+                  <SelectItem value="music_video">Music Video</SelectItem> */}
                 </SelectContent>
               </Select>
-              {/* Registered hidden input to enable RHF validation & submission */}
               <input
                 type="hidden"
-                {...register("genre", { required: "Genre is required" })}
-                value={genre}
+                {...register("contentType", { required: "Content type is required" })}
+                value={contentType}
                 readOnly
               />
-              {errors.genre && (
-                <p className="text-sm text-red-500">{errors.genre.message}</p>
+              {errors.contentType && (
+                <p className="text-sm text-red-500">{errors.contentType.message}</p>
               )}
             </div>
           </div>
@@ -297,14 +304,47 @@ export function SeriesUploadForm() {
               })}
             />
             {errors.description && (
-              <p className="text-sm text-red-500">
-                {errors.description.message}
-              </p>
+              <p className="text-sm text-red-500">{errors.description.message}</p>
+            )}
+          </div>
+
+          {/* Genre Multi-select Tags */}
+          <div className="space-y-3">
+            <label className="text-base font-medium text-slate-300 block">
+              Genre
+            </label>
+            <div className="flex flex-wrap gap-2">
+              {GENRE_OPTIONS.map((genre) => (
+                <button
+                  key={genre}
+                  type="button"
+                  onClick={() => toggleGenre(genre)}
+                  className={`px-3 py-1 rounded-full text-sm font-medium border transition-colors capitalize ${
+                    selectedGenres.includes(genre)
+                      ? "bg-purple-600 border-purple-600 text-white"
+                      : "bg-[#131824] border-[#1B202C] text-slate-400 hover:border-slate-500"
+                  }`}
+                >
+                  {selectedGenres.includes(genre) && (
+                    <X className="inline w-3 h-3 mr-1" />
+                  )}
+                  {genre.replace("_", " ")}
+                </button>
+              ))}
+            </div>
+            <input
+              type="hidden"
+              {...register("genres", {
+                validate: (v) => v.length > 0 || "Select at least one genre",
+              })}
+            />
+            {errors.genres && (
+              <p className="text-sm text-red-500">{errors.genres.message as string}</p>
             )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Content Type */}
+            {/* Content Category */}
             <div className="space-y-3 w-full">
               <label className="text-base font-medium text-slate-300 block">
                 Content Category
@@ -319,7 +359,7 @@ export function SeriesUploadForm() {
                 }
               >
                 <SelectTrigger className="bg-[#131824] border-[#1B202C] rounded text-slate-100 w-full">
-                  <SelectValue placeholder="Select content type" />
+                  <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent className="bg-[#131824] border-slate-700 text-white">
                   {categoriesList?.data?.map((cat: any) => (
@@ -332,7 +372,7 @@ export function SeriesUploadForm() {
               <input
                 type="hidden"
                 {...register("contentCategory", {
-                  required: "Content type is required",
+                  required: "Content category is required",
                 })}
                 value={contentCategory}
                 readOnly
@@ -344,47 +384,45 @@ export function SeriesUploadForm() {
               )}
             </div>
 
-            {/* Content Status */}
+            {/* Is Premium Toggle */}
             <div className="space-y-3">
               <label className="text-base font-medium text-slate-300 block">
-                Content Status
+                Is Premium
               </label>
-              <Select
-                value={contentType}
-                onValueChange={(val) =>
-                  setValue("contentType", val, {
+              <div
+                className="flex items-center gap-3 h-10 cursor-pointer"
+                onClick={() =>
+                  setValue("is_premium", !isPremium, {
                     shouldValidate: true,
                     shouldDirty: true,
                   })
                 }
               >
-                <SelectTrigger className="bg-[#131824] border-[#1B202C] rounded text-slate-100 w-full">
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent className="bg-[#131824] border-slate-700 text-white">
-                  <SelectItem value="published">Published</SelectItem>
-                  <SelectItem value="draft">Draft</SelectItem>
-                  <SelectItem value="private">Private</SelectItem>
-                  <SelectItem value="scheduled">Scheduled</SelectItem>
-                </SelectContent>
-              </Select>
+                <div
+                  className={`relative w-11 h-6 rounded-full transition-colors ${
+                    isPremium ? "bg-purple-600" : "bg-slate-700"
+                  }`}
+                >
+                  <div
+                    className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                      isPremium ? "translate-x-5" : "translate-x-0"
+                    }`}
+                  />
+                </div>
+                <span className="text-slate-400 text-sm">
+                  {isPremium ? "Yes" : "No"}
+                </span>
+              </div>
               <input
                 type="hidden"
-                {...register("contentType", {
-                  required: "Content status is required",
-                })}
-                value={contentType}
+                {...register("is_premium")}
+                value={String(isPremium)}
                 readOnly
               />
-              {errors.contentType && (
-                <p className="text-sm text-red-500">
-                  {errors.contentType.message}
-                </p>
-              )}
             </div>
           </div>
 
-          {/* Thumbnail Image (registered via setValue) */}
+          {/* Thumbnail Image */}
           <div className="space-y-3">
             <label className="text-base block font-medium text-slate-300">
               Thumbnail Image
@@ -407,8 +445,6 @@ export function SeriesUploadForm() {
                     </span>
                   </div>
                 </div>
-                {/* A hidden input is not required here because file inputs cannot have programmatic value set.
-                    We're storing the File directly in RHF via setValue. To validate, we register the field once: */}
                 <input
                   type="hidden"
                   {...register("thumbnailImg", {
@@ -427,17 +463,18 @@ export function SeriesUploadForm() {
           <div>
             <Button
               type="submit"
-              className={`w-full px-6 py-[13px] ${uploadContent.isError
-                ? "bg-red-600 hover:bg-red-700"
-                : "bg-[#7A24BC] hover:bg-[#7A24A1]"
-                } cursor-pointer`}
+              className={`w-full px-6 py-[13px] ${
+                uploadContent.isError
+                  ? "bg-red-600 hover:bg-red-700"
+                  : "bg-[#7A24BC] hover:bg-[#7A24A1]"
+              } cursor-pointer`}
               disabled={uploadContent.isPending}
             >
               {uploadContent.isPending
                 ? "Uploading..."
                 : uploadContent.isError
-                  ? "Try Again"
-                  : "Upload"}
+                ? "Try Again"
+                : "Upload"}
             </Button>
           </div>
         </div>
