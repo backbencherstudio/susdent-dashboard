@@ -54,16 +54,7 @@ const menuItems = [
         href: "/dashboard/subscriptions",
         icon: <Subscription className="w-[18px] h-[18px]" />,
         label: "Subscriptions",
-        subItems: [
-            {
-                href: "/dashboard/subscriptions/viewer",
-                label: "Viewer",
-            },
-            {
-                href: "/dashboard/subscriptions/uploader",
-                label: "Uploader",
-            },
-        ],
+       
     },
 
     {
