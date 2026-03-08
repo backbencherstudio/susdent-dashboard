@@ -19,6 +19,7 @@ export const privateAxios = axios.create({
   headers: {
     // 'Content-Type': 'application/json',
   },
+  withCredentials: true,
 });
 
 // Add interceptor to attach auth token to privateAxios requests

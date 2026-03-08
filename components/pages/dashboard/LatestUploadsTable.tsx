@@ -1,81 +1,82 @@
-
 import { DataTable } from "@/components/reusable/data-table";
 import { ColumnDef } from "@tanstack/react-table";
-
 import React from "react";
 
-interface VideoDetails {
-  id: number;
+interface LatestUpload {
+  id: string;
   type: string;
-  uploadDate: string;
-  duration: string;
-  views: string;
+  title: string;
+  upload_date: string;
+  duration_seconds: number | null;
+  duration_formatted: string | null;
+  views: number;
 }
 
-const videoData: VideoDetails[] = [
+const columns: ColumnDef<LatestUpload>[] = [
   {
-    id: 1,
-    type: "Movie",
-    uploadDate: "Apr 18, 2025",
-    duration: "1h 45m",
-    views: "1.2M",
+    accessorKey: "title",
+    header: "Title",
+    cell: ({ row }) => (
+      <span className="text-white">{row.original.title}</span>
+    ),
   },
-  {
-    id: 2,
-    type: "Series",
-    uploadDate: "Apr 17, 2025",
-    duration: "1h 25m",
-    views: "830K",
-  },
-  {
-    id: 3,
-    type: "Series",
-    uploadDate: "Apr 16, 2025",
-    duration: "1h 55m",
-    views: "25K",
-  },
-  {
-    id: 4,
-    type: "Series",
-    uploadDate: "Apr 16, 2025",
-    duration: "1h 55m",
-    views: "25K",
-  },
-];
-//
-const columns: ColumnDef<VideoDetails>[] = [
   {
     accessorKey: "type",
     header: "Type",
-    cell: ({ row }) => <span className="">{row.original.type}</span>,
+    cell: ({ row }) => (
+      <span className="capitalize text-gray-300">{row.original.type}</span>
+    ),
   },
   {
-    accessorKey: "uploadDate",
+    accessorKey: "upload_date",
     header: "Upload Date",
-    cell: ({ row }) => <span className="">{row.original.uploadDate}</span>,
+    cell: ({ row }) => {
+      const date = new Date(row.original.upload_date);
+      return (
+        <span className="text-gray-300">
+          {date.toLocaleDateString("en-US", {
+            month: "short",
+            day: "numeric",
+            year: "numeric",
+          })}
+        </span>
+      );
+    },
   },
   {
-    accessorKey: "duration",
+    accessorKey: "duration_formatted",
     header: "Duration",
-    cell: ({ row }) => <span className="">{row.original.duration}</span>,
+    cell: ({ row }) => (
+      <span className="text-gray-300">
+        {row.original.duration_formatted ?? "-"}
+      </span>
+    ),
   },
   {
     accessorKey: "views",
     header: "Views",
-    cell: ({ row }) => <span className="">{row.original.views}</span>,
+    cell: ({ row }) => (
+      <span className="text-gray-300">
+        {row.original.views.toLocaleString()}
+      </span>
+    ),
   },
 ];
 
-export default function LatestUploadsTable() {
+export default function LatestUploadsTable({
+  data,
+}: {
+  data: LatestUpload[];
+}) {
   return (
-    <div className="rounded-lg mt-4 ">
-      <DataTable columns={columns} data={videoData} >
+    <div className="rounded-lg mt-4">
+      <DataTable columns={columns} data={data.slice(0, 4) ?? []}>
         <div className="flex items-center justify-between">
-          <h2 className="text-[color:var(--W,#FFF)] text-base font-medium leading-[160%]">
+          <h2 className="text-white text-base font-medium leading-[160%]">
             Latest Uploads
           </h2>
 
-          <button className="text-[color:var(--W,#FFF)]  text-xs font-medium leading-[100%] cursor-pointer">
+          <button className="text-white text-xs font-medium cursor-pointer">
             View All
           </button>
         </div>

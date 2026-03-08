@@ -13,10 +13,7 @@ export default function Tabs() {
       name: 'Security Settings',
       href: '/dashboard/setting/security',
     },
-    {
-      name: 'Billings',
-      href: '/dashboard/setting/billing',
-    },
+   
     {
       name: 'Notifications',
       href: '/dashboard/setting/notification',

@@ -8,41 +8,17 @@ import StatsCard from "@/components/reusable/StatsCard";
 import { useQuery } from "@tanstack/react-query";
 
 export default function Subscription() {
-  // total subscriber
-  const { data: totalSubscriber } = useQuery({
+
+
+  const { data: subscriptionStats } = useQuery({
     queryKey: ["totalSubscriber"],
     queryFn: async () => {
-      const res = await privateAxios.get("/payments/totalSubscribers");
-      return res.data;
+      const res = await privateAxios.get("/payments/subscriptions/stats?kind=all");
+      return res.data.cards;
     },
   });
 
-  // active subscription
-  const { data: totalActiveSubscription } = useQuery({
-    queryKey: ["totalActiveSubscription"],
-    queryFn: async () => {
-      const res = await privateAxios.get("/payments/totalActiveSubscribers");
-      return res.data;
-    },
-  });
-
-  // monthly revenue
-  const { data: monthlyRevenue } = useQuery({
-    queryKey: ["monthlyRevenue"],
-    queryFn: async () => {
-      const res = await privateAxios.get("/payments/totalMonthlyRevenue");
-      return res.data;
-    },
-  });
-
-  // average subscription value
-  const { data: totalAvgSubValue } = useQuery({
-    queryKey: ["totalAvgSubValue"],
-    queryFn: async () => {
-      const res = await privateAxios.get("/payments/totalAvgSubValue");
-      return res.data;
-    },
-  });
+  // console.log(subscriptionStats);
 
   return (
     <>
@@ -50,22 +26,22 @@ export default function Subscription() {
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard
           title="Total Subscribers"
-          count={totalSubscriber?.totalSubscribers.toLocaleString()}
+          count={subscriptionStats?.total_subscribers.value.toFixed() ?? 0}
           description="+8.2% from last month"
         />
         <StatsCard
           title="Active Subscriptions"
-          count={totalActiveSubscription?.message}
+          count={subscriptionStats?.active_subscriptions.value.toFixed() ?? 0}
           description="82% retention"
         />
         <StatsCard
           title="Monthly Revenue"
-          count={monthlyRevenue?.message}
+          count={subscriptionStats?.monthly_revenue.value.toFixed() ?? 0}
           description="+12% growth"
         />
         <StatsCard
           title="Avg. Subscription Value"
-          count={totalAvgSubValue?.message}
+          count={subscriptionStats?.avg_subscription_value.value.toFixed() ?? 0}
           description="Most popular: Premium"
         />
       </section>
@@ -102,5 +78,4 @@ export default function Subscription() {
     </>
   );
 }
-
 

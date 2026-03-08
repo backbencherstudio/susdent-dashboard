@@ -1,37 +1,46 @@
-import UserIcon from "@/components/icons/UserIcon";
+import DollerCircleIcon from "@/components/icons/DollerCircleIcon";
+import RevenueIcon from "@/components/icons/RevenueIcon";
+import { User } from "lucide-react";
 import React from "react";
 
 interface StatCard {
   icon: React.ReactNode;
   title: string;
-  count: string | number;
+  count: string | number | React.ReactNode;
 }
 
-export default function StatsCard() {
+export default function StatsCard({ data }: { data: any }) {
+  // console.log(data ?? "no data");
   return (
     <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <StatCard icon={<UserIcon />} title="Total Users" count="200k" />
-      <StatCard icon={<UserIcon />} title="Total Users" count="200k" />
-      <StatCard icon={<UserIcon />} title="Total Users" count="200k" />
-      <StatCard icon={<UserIcon />} title="Total Users" count="200k" />
+      <StatCard icon={<User />} title="Total Users" count={data?.total_users} />
+      <StatCard icon={<User />} title="Active Subscriptions" count={data?.active_subscriptions} />
+      {/* <StatCard icon={<User />} title="Active Creator Subscriptions" count={data?.active_creator_subscriptions} /> */}
+      <StatCard icon={<RevenueIcon />} title="Revenue This Month" count={data?.revenue_this_month} />
+
+      <StatCard icon={<DollerCircleIcon />} title="Top viewed Movie" count={<p className="text-white text-[24px] font-semibold leading-[160%]">{data?.top_viewed_movie?.title}</p>} />
     </section>
   );
 }
 
 const StatCard = ({ icon, title, count }: StatCard) => {
   return (
-    <div className="flex flex-col items-start gap-4 flex-[1_0_0] border border-[color:var(--Line-Color,#1B202C)] [background:linear-gradient(180deg,rgba(0,0,0,0.10)_0%,rgba(122,36,188,0.10)_100%)] p-4 rounded-lg border-solid">
-      <div className="flex justify-between items-center self-stretch">
-        <div className="space-y-4">
-          <div>{icon}</div>
-          <div className="text-[color:var(--W,#FFF)] text-[13px] font-normal leading-[160%]">
-            {title}
-          </div>
+    <div className="relative p-6 rounded-2xl border border-[#1B202C] bg-gradient-to-br from-[#020617] via-[#0B1023] to-[#1A1036] flex flex-col gap-6">
+
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="text-white">{icon}</div>
+          <p className="text-gray-300 text-[16px]">{title}</p>
         </div>
 
-        <div className="self-stretch text-[color:var(--Neutral-Colors-100,#FFF)]  text-[28px] font-semibold leading-[130%] tracking-[0.14px]">
-          {count}
-        </div>
+        {/* Three dots */}
+        <button className="text-gray-400 text-xl leading-none">•••</button>
+      </div>
+
+      {/* Count */}
+      <div className="text-white text-[48px] font-semibold tracking-wide">
+        {count}
       </div>
     </div>
   );
