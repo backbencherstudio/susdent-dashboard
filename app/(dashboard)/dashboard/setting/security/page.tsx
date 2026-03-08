@@ -20,14 +20,14 @@ export default function Setting() {
         <ChangePassword/>
 
         {/* Google Authentication */}
-        <div className="py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[#1B202C]">
+        {/* <div className="py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-[#1B202C]">
             <div className="w-full sm:w-[60%]">
                 <h6 className="text-base font-medium text-white mb-4">Google Authentication <small className="text-[#2ECC71]">Connected</small></h6>
                 <p className="text-sm font-normal text-[#A5A5AB]">Connect to Google</p>
             </div>
 
             <Switch  checked className="cursor-pointer custom-switch"/>
-        </div>
+        </div> */}
 
         {/* Deactivate Account */}
         <DeactiveAccount/>

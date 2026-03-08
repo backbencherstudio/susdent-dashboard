@@ -2,12 +2,14 @@ import { privateAxios } from "@/components/axiosInstance/axios";
 import TrashBin from "@/components/icons/TrashBin";
 import { DiamondMinus } from "lucide-react";
 import { useState } from "react";
-
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export default function DeleteUser({id}: {id: string}) {
 
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
+
   
   // Delete User
   const handleDelete = async () => {
@@ -22,6 +24,7 @@ export default function DeleteUser({id}: {id: string}) {
             color: "#fff", 
         },
         });
+        router.back();
     }
     } catch (error: any) {
         toast.error(error.response.data, {

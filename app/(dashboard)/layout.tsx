@@ -13,7 +13,10 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
         position="top-center"
         reverseOrder={false}
       />
-      <ClientLayout>{children}</ClientLayout>
+
+      <PrivateRoute>
+        <ClientLayout>{children}</ClientLayout>
+      </PrivateRoute>
     </>
   );
 }

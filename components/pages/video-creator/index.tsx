@@ -27,7 +27,7 @@ export default function CreatorManagementTable() {
 
   // Fetch Creators Query
   const { data, isLoading, error } = useQuery({
-    queryKey: ["creators", filters],
+    queryKey: ["creators", "list", filters],
     queryFn: () => fetchCreators(filters),
   });
 

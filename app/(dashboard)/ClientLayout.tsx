@@ -34,7 +34,7 @@ export default function ClientLayout({ children }: { children: ReactNode }) {
   // Fake user data (since we're not fetching real data)
   const user = {
     data: {
-      avatar_url: "/images/user-profile.svg",
+      avatar_url: "/images/admin.avif",
       name: "John Doe",
       email: "john.doe@example.com",
     },

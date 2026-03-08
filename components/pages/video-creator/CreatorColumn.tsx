@@ -67,7 +67,7 @@ export const getCreatorColumns = (
             {isSuspending ? "..." : "Suspend"}
           </button> */}
 
-            <SuspendModal row={row} userId={row.original.id} />
+            <SuspendModal row={row} status={row.original.status} userId={row.original.id} />
 
             <Link href={`./video-creator/${row.original.id}`}>
               Details

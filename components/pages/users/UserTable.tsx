@@ -110,7 +110,7 @@ export default function UserTable() {
   ];
   // get data
   const { data: userData, error, isLoading } = useQuery({
-    queryKey: ['userData'],
+    queryKey: ['userData', "users"],
     queryFn: async () => {
       const res = await privateAxios.get("/admin/user/allusers");
       return res.data.users ?? [];

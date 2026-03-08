@@ -67,11 +67,11 @@ const menuItems = [
         icon: <VideoCreatorIcon className="w-[18px] h-[18px]" />,
         label: "Video Creator",
     },
-    {
-        href: "/dashboard/live-streaming",
-        icon: <LiveIcon className="w-[18px] h-[18px]" />,
-        label: "Live Streaming",
-    },
+    // {
+    //     href: "/dashboard/live-streaming",
+    //     icon: <LiveIcon className="w-[18px] h-[18px]" />,
+    //     label: "Live Streaming",
+    // },
     {
         href: "/dashboard/setting",
         icon: <Setting className="w-[18px] h-[18px]" />,

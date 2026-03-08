@@ -53,72 +53,103 @@ export default function Setting() {
   const { user } = useAuth();
 
   const [image, setImage] = useState<File | undefined>();
+  const [isUploading, setIsUploading] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   // Image Preview Show
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+    setValue,
+    reset
+  } = useForm<FormData>();
+
+  // Set form default values when user data is available
+  useEffect(() => {
+    if (user) {
+      reset({
+        name: user.name || '',
+        email: user.email || '',
+        date_of_birth: user.date_of_birth ? new Date(user.date_of_birth).toLocaleDateString('en-CA') : '',
+        address: user.address || '',
+        phone_number: user.phone_number || '',
+        country: user.country || null,
+        state: user.state || null,
+        city: user.city || null,
+        postal_code: user.postal_code || '',
+        bio: user.bio || ''
+      });
+    }
+  }, [user, reset]);
 
   // Handle file selection and show the image preview
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
-      // Read the file as a data URL (base64 string)
       reader.onloadend = () => {
-        setImagePreview(reader.result as string);  // Update image preview state
+        setImagePreview(reader.result as string);
       };
-      if (file) {
-        reader.readAsDataURL(file);  // Convert the file to a data URL
-      }
-
+      reader.readAsDataURL(file);
       setImage(file);
     }
   };
 
-  // Update Image
-  useEffect(() => {
-    const updateImage = async () => {
-      const data = {
-        profilePicture: image
-      };
+  // Handle image upload separately (you can trigger this with a button)
+  const handleImageUpload = async () => {
+    if (!image) {
+      toast.error("Please select an image first", {
+        position: "top-right",
+      });
+      return;
+    }
 
-      try {
-        const response = await privateAxios.put("/users/update-image", data, {
-          headers: {
-            "Content-Type": "multipart/form-data"
-          }
-        });
-        if (response.data) {
-          toast.success("Image updated successfully", {
-            position: "top-right",
-            style: {
-              backgroundColor: "#4CAF50",
-              color: "#fff",
-            },
-          });
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append("profilePicture", image);
+
+    try {
+      const response = await privateAxios.put("/users/update-image", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data"
         }
-      } catch (errorData: any) {
-        toast.error("Image updated failed", {
+      });
+
+      if (response.data) {
+        toast.success("Image updated successfully", {
           position: "top-right",
           style: {
-            backgroundColor: "#f44336",
+            backgroundColor: "#4CAF50",
             color: "#fff",
           },
         });
+        // Optionally refresh user data or update local state
+        setImagePreview(null); // Clear preview after successful upload
+        setImage(undefined);
       }
-    };
-
-    if (image) {
-      updateImage();
+    } catch (errorData: any) {
+      toast.error(errorData.response?.data?.message || "Image upload failed", {
+        position: "top-right",
+        style: {
+          backgroundColor: "#f44336",
+          color: "#fff",
+        },
+      });
+    } finally {
+      setIsUploading(false);
     }
-  }, [image]);
+  };
 
   // Handle delete action (reset the image preview)
-  /*  const handleDelete = () => {
-     setImagePreview(null);  // Reset the preview image
-     setImage(undefined);
-   }; */
+  const handleDelete = () => {
+    setImagePreview(null);
+    setImage(undefined);
+  };
 
   // City
-  const citis: CityData[] = [
+  const cities: CityData[] = [
     {
       label: "Dhaka",
       value: "Dhaka"
@@ -140,8 +171,8 @@ export default function Setting() {
       value: "USA"
     },
     {
-      label: "Franch",
-      value: "Franch",
+      label: "France",
+      value: "France",
     },
     {
       label: "England",
@@ -161,24 +192,19 @@ export default function Setting() {
     },
   ]
 
-  //console.log(user);
-
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-    setValue,
-  } = useForm<FormData>();
-
   const onSubmit = async (data: FormData) => {
+    setIsSubmitting(true);
     try {
+      // Format date properly
+      const formattedData = {
+        ...data,
+        date_of_birth: data.date_of_birth ? new Date(data.date_of_birth).toISOString().split('T')[0] : null,
+      };
 
-      const date_of_birth = new Date(data.date_of_birth).toISOString();
-      data.date_of_birth = date_of_birth;
+      const response = await privateAxios.put("/users/update-user-details", formattedData);
 
-      const response = await privateAxios.put("/users/update-user-details", data);
       if (response.data) {
-        toast.success("Data updated successfully", {
+        toast.success("Profile updated successfully", {
           position: "top-right",
           style: {
             backgroundColor: "#4CAF50",
@@ -187,21 +213,17 @@ export default function Setting() {
         });
       }
     } catch (errorData: any) {
-      toast.error("Data updated failed", {
+      toast.error(errorData.response?.data?.message || "Update failed", {
         position: "top-right",
         style: {
           backgroundColor: "#f44336",
           color: "#fff",
         },
       });
+    } finally {
+      setIsSubmitting(false);
     }
   }
-
-  // convert dob in normal
-  const dob = user?.date_of_birth;
-  const formattedDate = dob
-    ? new Date(dob).toLocaleDateString('en-CA')
-    : '';
 
   return (
     <>
@@ -211,21 +233,41 @@ export default function Setting() {
       {/* Image Upload */}
       <div className='flex flex-wrap items-center gap-2 sm:gap-5 '>
         <div>
-          <div className="h-[100px] w-[100px]">
-            {imagePreview ? (
-              <Image src={imagePreview} alt="Preview" className="h-full w-full object-cover rounded-full" width={100} height={100} />
-            ) : (
-              user?.imageUrl ?
-                <Image src={user.imageUrl} alt="Admin" className="h-[100px] w-[100px]" width={100} height={100} /> :
-                <Image src="/images/user.svg" alt="Admin" className="h-[100px] w-[100px]" width={100} height={100} />
-            )}
+          <div className="h-[100px] w-[100px] rounded-full overflow-hidden">
+            <img
+              src={imagePreview || user?.imageUrl || "/images/admin.avif"}
+              alt="Admin"
+              className="h-[100px] w-[100px] object-cover"
+              width={100}
+              height={100}
+            />
           </div>
         </div>
+
         <label htmlFor="profileImage" className='cursor-pointer py-[14px] px-5 border border-white rounded-[100px]'>
           <input type="file" hidden id="profileImage" accept="image/*" onChange={handleImageChange} />
-          <span className='text-sm font-medium'>Upload New Picture</span>
+          <span className='text-sm font-medium'>Choose New Picture</span>
         </label>
-        {/* <button type="button" onClick={handleDelete} className='text-sm font-medium px-5 py-[14px] rounded-[100px] bg-btn-secondary-bg cursor-pointer'>Delete</button> */}
+
+        {image && (
+          <>
+            <button
+              type="button"
+              onClick={handleImageUpload}
+              disabled={isUploading}
+              className='text-sm font-medium px-5 py-[14px] rounded-[100px] bg-green-600 text-white cursor-pointer disabled:opacity-50'
+            >
+              {isUploading ? 'Uploading...' : 'Upload Image'}
+            </button>
+            <button
+              type="button"
+              onClick={handleDelete}
+              className='text-sm font-medium px-5 py-[14px] rounded-[100px] bg-red-600 text-white cursor-pointer'
+            >
+              Cancel
+            </button>
+          </>
+        )}
       </div>
 
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -235,61 +277,86 @@ export default function Setting() {
           <div className="grid sm:grid-cols-2 gap-5">
             {/* Name */}
             <div className="mb-4">
-              <Label className="text-base font-mediumd mb-3">Name</Label>
-              <Input defaultValue={user?.name} {...register("name", { required: "Name is required" })} className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter name" />
-
+              <Label className="text-base font-medium mb-3">Name</Label>
+              <Input
+                {...register("name", { required: "Name is required" })}
+                className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color"
+                placeholder="Enter name"
+              />
               {errors.name && (
-                <p className="error-msg">{errors.name.message}</p>
+                <p className="error-msg text-red-500 text-sm mt-1">{errors.name.message}</p>
               )}
             </div>
 
             {/* Email */}
             <div>
-              <Label className="text-base font-mediumd mb-3">Email</Label>
-              <Input defaultValue={user?.email} {...register("email", { required: "Email is required", pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Please enter a valid email address" } })} className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter email address" />
-
+              <Label className="text-base font-medium mb-3">Email</Label>
+              <Input
+                readOnly
+                {...register("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Please enter a valid email address"
+                  }
+                })}
+                className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color"
+                placeholder="Enter email address"
+              />
               {errors.email && (
-                <p className="error-msg">{errors.email.message}</p>
+                <p className="error-msg text-red-500 text-sm mt-1">{errors.email.message}</p>
               )}
             </div>
 
             {/* Date of Birth */}
             <div>
-              <Label className="text-base font-mediumd mb-3">Date of Birth</Label>
+              <Label className="text-base font-medium mb-3">Date of Birth</Label>
               <div className="relative">
-                <Input {...register("date_of_birth")} type="date" defaultValue={formattedDate} className="block h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" id="datepicker" />
+                <Input
+                  {...register("date_of_birth")}
+                  type="date"
+                  className="block h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color"
+                />
               </div>
             </div>
 
             {/* Address */}
             <div>
-              <Label className="text-base font-mediumd mb-3">Address</Label>
-              <Input {...register("address")} defaultValue={user?.address} className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter your address" />
+              <Label className="text-base font-medium mb-3">Address</Label>
+              <Input
+                {...register("address")}
+                className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color"
+                placeholder="Enter your address"
+              />
             </div>
 
             {/* Phone */}
             <div>
-              <Label className="text-base font-mediumd mb-3">Phone</Label>
-              <Input {...register("phone_number")} defaultValue={user?.phone_number} className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter phone" />
+              <Label className="text-base font-medium mb-3">Phone</Label>
+              <Input
+                {...register("phone_number")}
+                className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color"
+                placeholder="Enter phone"
+              />
             </div>
 
             {/* Country */}
             <div>
-              <Label className="text-base font-mediumd mb-3">Country</Label>
-
+              <Label className="text-base font-medium mb-3">Country</Label>
               <Select
-                value={user?.country}
                 onValueChange={(val) => setValue("country", val)}
-                {...register("country")}
+                defaultValue={user?.country || undefined}
               >
                 <SelectTrigger className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color">
-                  <SelectValue placeholder="Select" />
+                  <SelectValue placeholder="Select country" />
                 </SelectTrigger>
                 <SelectContent className="bg-secondary-bg text-white border border-slate-700 rounded">
                   {
                     countries.map((country, idx) => {
                       return (
-                        <SelectItem key={idx} value={country.value} className="cursor-pointer">{country.label}</SelectItem>
+                        <SelectItem key={idx} value={country.value} className="cursor-pointer">
+                          {country.label}
+                        </SelectItem>
                       )
                     })
                   }
@@ -299,21 +366,21 @@ export default function Setting() {
 
             {/* States */}
             <div>
-              <Label className="text-base font-mediumd mb-3">State</Label>
-
+              <Label className="text-base font-medium mb-3">State</Label>
               <Select
-                value={user?.state}
                 onValueChange={(val) => setValue("state", val)}
-                {...register("state")}
+                defaultValue={user?.state || undefined}
               >
                 <SelectTrigger className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color">
-                  <SelectValue placeholder="Select" />
+                  <SelectValue placeholder="Select state" />
                 </SelectTrigger>
                 <SelectContent className="bg-secondary-bg text-white border border-slate-700 rounded">
                   {
                     states.map((state, idx) => {
                       return (
-                        <SelectItem key={idx} value={state.value} className="cursor-pointer">{state.label}</SelectItem>
+                        <SelectItem key={idx} value={state.value} className="cursor-pointer">
+                          {state.label}
+                        </SelectItem>
                       )
                     })
                   }
@@ -323,21 +390,21 @@ export default function Setting() {
 
             {/* City */}
             <div>
-              <Label className="text-base font-mediumd mb-3">City</Label>
-
+              <Label className="text-base font-medium mb-3">City</Label>
               <Select
-                value={user?.city}
                 onValueChange={(val) => setValue("city", val)}
-                {...register("city")}
+                defaultValue={user?.city || undefined}
               >
                 <SelectTrigger className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color">
-                  <SelectValue placeholder="Select" />
+                  <SelectValue placeholder="Select city" />
                 </SelectTrigger>
                 <SelectContent className="bg-secondary-bg text-white border border-slate-700 rounded">
                   {
-                    citis.map((city, idx) => {
+                    cities.map((city, idx) => {
                       return (
-                        <SelectItem key={idx} value={city.value} className="cursor-pointer">{city.label}</SelectItem>
+                        <SelectItem key={idx} value={city.value} className="cursor-pointer">
+                          {city.label}
+                        </SelectItem>
                       )
                     })
                   }
@@ -347,22 +414,35 @@ export default function Setting() {
 
             {/* Postal Code */}
             <div>
-              <Label className="text-base font-mediumd mb-3">Postal Code</Label>
-              <Input {...register("postal_code")} defaultValue={user?.postal_code} className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter postal code" />
+              <Label className="text-base font-medium mb-3">Postal Code</Label>
+              <Input
+                {...register("postal_code")}
+                className="h-[40px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color"
+                placeholder="Enter postal code"
+              />
             </div>
           </div>
 
           {/* Bio */}
           <div className="mt-4 mb-6">
-            <Label className="text-base font-mediumd mb-3">Bio</Label>
-            <Textarea {...register("bio")} defaultValue={user?.bio} className="h-[100px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color" placeholder="Enter postal code" />
+            <Label className="text-base font-medium mb-3">Bio</Label>
+            <Textarea
+              {...register("bio")}
+              className="h-[100px] w-full px-4 py-3 text-sm font-normal border border-[#0D121E] bg-[#0D121E] rounded outline-none focus-visible:ring-0 focus-visible:border-primary-color"
+              placeholder="Enter your bio"
+            />
           </div>
 
-          <button type="submit" className="bg-primary-color text-white px-5 py-[10px] rounded text-sm font-normal cursor-pointer">Save</button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="bg-primary-color text-white px-5 py-[10px] rounded text-sm font-normal cursor-pointer disabled:opacity-50"
+          >
+            {isSubmitting ? 'Saving...' : 'Save Changes'}
+          </button>
 
         </div>
       </form>
-
     </>
   )
 }

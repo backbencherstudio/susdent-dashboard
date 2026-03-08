@@ -17,7 +17,7 @@ export default function UserDetails() {
 
 
   const { data: userDet, isLoading } = useQuery({
-    queryKey: ["userDet", id],
+    queryKey: ["users", id],
     queryFn: async () => {
       const res = await privateAxios.get(`/admin/user/${id}`);
       return res.data.user;
@@ -34,7 +34,7 @@ export default function UserDetails() {
 
   if (isLoading) return <p>Loading...</p>;
 
-  console.log(userDet);
+  // console.log(userDet);
 
   return (
     <>
